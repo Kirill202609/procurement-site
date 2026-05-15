@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Документы — Дирекция закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .docs-section{margin-bottom:40px}
+    .doc-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-radius:var(--r-md);background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.78);transition:all 0.15s;cursor:pointer;text-decoration:none;color:inherit}
+    .doc-row:hover{background:rgba(255,255,255,0.78);transform:translateX(4px)}
+    .doc-icon{font-size:22px;flex-shrink:0;width:36px;text-align:center}
+    .doc-name{font-size:14px;font-weight:600;flex:1}
+    .doc-meta{font-size:11px;color:var(--subtle);white-space:nowrap}
+    .doc-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;flex-shrink:0}
+    .doc-badge-new{background:rgba(74,110,224,0.12);color:var(--primary)}
+    .doc-badge-upd{background:rgba(22,101,52,0.1);color:#166534}
+  </style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section style="padding:60px 0 40px">
+  <div class="container">
+    <div class="hero-tag">Библиотека документов</div>
+    <h1 class="hero-title" style="font-size:clamp(34px,4vw,52px);margin-bottom:12px">
+      Документы <span>и регламенты</span>
+    </h1>
+    <p style="font-size:16px;color:var(--muted);line-height:1.65;max-width:520px">
+      Актуальные положения, шаблоны договоров и формы для работы с дирекцией закупок.
+    </p>
+  </div>
+</section>
+
+<section style="padding:0 0 16px">
+  <div class="container">
+    <div class="search-wrap" style="max-width:400px">
+      <span class="search-icon">🔍</span>
+      <input class="input" id="docSearch" placeholder="Поиск документов..." oninput="filterDocs()">
+    </div>
+  </div>
+</section>
+
+<section style="padding:0 0 80px">
+  <div class="container" id="docsContainer">
+
+    <div class="docs-section" data-section="Регламенты и положения">
+      <div class="section-tag" style="margin-bottom:16px">Регламенты и положения</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📋</span>
+          <span class="doc-name">Положение о закупочной деятельности</span>
+          <span class="doc-badge doc-badge-upd">Обновлено</span>
+          <span class="doc-meta">PDF · 1,2 МБ · 01.06.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📋</span>
+          <span class="doc-name">Регламент проведения тендеров</span>
+          <span class="doc-meta">PDF · 890 КБ · 15.03.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📋</span>
+          <span class="doc-name">Кодекс этики в закупках</span>
+          <span class="doc-meta">PDF · 450 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📋</span>
+          <span class="doc-name">Политика управления конфликтом интересов</span>
+          <span class="doc-meta">PDF · 320 КБ · 01.01.2026</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="docs-section" data-section="Шаблоны договоров">
+      <div class="section-tag" style="margin-bottom:16px">Шаблоны договоров</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">Договор поставки товаров</span>
+          <span class="doc-badge doc-badge-new">Новый</span>
+          <span class="doc-meta">DOCX · 85 КБ · 01.05.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">Договор оказания услуг</span>
+          <span class="doc-meta">DOCX · 78 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">Рамочный договор (долгосрочный)</span>
+          <span class="doc-meta">DOCX · 92 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">Дополнительное соглашение</span>
+          <span class="doc-meta">DOCX · 42 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📄</span>
+          <span class="doc-name">Акт приёма-передачи</span>
+          <span class="doc-meta">DOCX · 38 КБ · 01.01.2026</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="docs-section" data-section="Формы и заявки">
+      <div class="section-tag" style="margin-bottom:16px">Формы и заявки</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📝</span>
+          <span class="doc-name">Заявка на закупку (форма)</span>
+          <span class="doc-badge doc-badge-upd">Обновлено</span>
+          <span class="doc-meta">XLSX · 62 КБ · 01.04.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📝</span>
+          <span class="doc-name">Техническое задание (шаблон)</span>
+          <span class="doc-meta">DOCX · 55 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📝</span>
+          <span class="doc-name">Заявка на аккредитацию поставщика</span>
+          <span class="doc-meta">PDF · 180 КБ · 01.01.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📝</span>
+          <span class="doc-name">Анкета квалификации поставщика</span>
+          <span class="doc-meta">DOCX · 70 КБ · 01.01.2026</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="docs-section" data-section="Отчётность">
+      <div class="section-tag" style="margin-bottom:16px">Отчётность</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📊</span>
+          <span class="doc-name">Годовой отчёт по закупкам 2025</span>
+          <span class="doc-badge doc-badge-new">Новый</span>
+          <span class="doc-meta">PDF · 3,4 МБ · 28.02.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📊</span>
+          <span class="doc-name">Отчёт Q1 2026 — итоги тендеров</span>
+          <span class="doc-meta">PDF · 1,8 МБ · 05.05.2026</span>
+        </a>
+        <a href="#" class="doc-row">
+          <span class="doc-icon">📊</span>
+          <span class="doc-name">Реестр аккредитованных поставщиков</span>
+          <span class="doc-meta">XLSX · 240 КБ · 15.05.2026</span>
+        </a>
+      </div>
+    </div>
+
+    <div id="emptyDocs" class="empty-state hidden">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Документы не найдены</div>
+      <div style="font-size:13px;color:var(--subtle);margin-top:6px">Попробуйте изменить поисковый запрос</div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="app.js"></script>
+<script>
+document.getElementById('nav-slot').innerHTML   = navHTML('docs.html');
+document.getElementById('footer-slot').innerHTML = footerHTML();
+
+function filterDocs() {
+  const q = document.getElementById('docSearch').value.toLowerCase().trim();
+  let anyVisible = false;
+  document.querySelectorAll('.doc-row').forEach(row => {
+    const name = row.querySelector('.doc-name').textContent.toLowerCase();
+    const section = row.closest('.docs-section').dataset.section.toLowerCase();
+    const match = !q || name.includes(q) || section.includes(q);
+    row.style.display = match ? '' : 'none';
+    if (match) anyVisible = true;
+  });
+  document.querySelectorAll('.docs-section').forEach(sec => {
+    const visible = [...sec.querySelectorAll('.doc-row')].some(r => r.style.display !== 'none');
+    sec.style.display = visible ? '' : 'none';
+  });
+  document.getElementById('emptyDocs').classList.toggle('hidden', anyVisible);
+}
+</script>
+</body>
+</html>

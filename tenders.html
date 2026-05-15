@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Реестр закупок — Дирекция закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<div class="container" style="padding-top:48px">
+  <!-- Page header -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:32px;flex-wrap:wrap">
+    <div>
+      <h1 class="page-title">Реестр закупок</h1>
+      <p class="page-sub">Управление закупочными задачами и тендерами</p>
+    </div>
+    <button class="btn btn-primary" onclick="openCreate()">+ Новая закупка</button>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-row" id="summaryRow"></div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="input" id="searchInput" placeholder="Поиск по наименованию, номеру..." oninput="render()">
+    </div>
+    <select class="input" id="statusFilter" onchange="render()">
+      <option value="">Все статусы</option>
+    </select>
+    <select class="input" id="catFilter" onchange="render()">
+      <option value="">Все категории</option>
+    </select>
+    <select class="input" id="prioFilter" onchange="render()">
+      <option value="">Все приоритеты</option>
+    </select>
+    <button class="btn btn-ghost btn-sm" onclick="clearFilters()">Сбросить</button>
+  </div>
+
+  <!-- Table -->
+  <div class="card" style="overflow:hidden;margin-bottom:60px">
+    <div class="table-wrap" id="tableWrap"></div>
+  </div>
+</div>
+
+<div id="footer-slot"></div>
+
+<!-- DETAIL MODAL -->
+<div class="overlay hidden" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="modal" id="detailModal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="dTitle"></div>
+        <div class="modal-num" id="dNum"></div>
+      </div>
+      <button class="btn-icon" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="dGrid"></div>
+      <div id="dDesc"></div>
+      <div id="dComment"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="dDelBtn">Удалить</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeDetail()">Закрыть</button>
+      <button class="btn btn-primary btn-sm" id="dEditBtn">Редактировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORM MODAL -->
+<div class="overlay hidden" id="formOverlay" onclick="if(event.target===this)closeForm()">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="fTitle">Новая закупка</div>
+        <div class="modal-num" id="fNum"></div>
+      </div>
+      <button class="btn-icon" onclick="closeForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Номер</label>
+          <input class="input mono" id="fNumber">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Категория</label>
+          <select class="input" id="fCategory"></select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Наименование *</label>
+        <input class="input" id="fTitleInput" placeholder="Например: Закупка оборудования для ЦОД">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Описание</label>
+        <textarea class="input" id="fDesc"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Инициатор</label>
+          <input class="input" id="fInitiator">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ответственный</label>
+          <input class="input" id="fResponsible">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Поставщик</label>
+        <input class="input" id="fSupplier">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Сумма</label>
+          <input class="input mono" type="number" id="fAmount" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Валюта</label>
+          <select class="input" id="fCurrency">
+            <option value="RUB">RUB ₽</option>
+            <option value="USD">USD $</option>
+            <option value="EUR">EUR €</option>
+            <option value="CNY">CNY ¥</option>
+            <option value="KZT">KZT ₸</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row form-row-3">
+        <div class="form-group">
+          <label class="form-label">Статус</label>
+          <select class="input" id="fStatus"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Приоритет</label>
+          <select class="input" id="fPriority"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Срок</label>
+          <input class="input" type="date" id="fDeadline">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Комментарий</label>
+        <textarea class="input" id="fComment" style="min-height:60px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeForm()">Отмена</button>
+      <button class="btn btn-primary" id="fSaveBtn" onclick="saveForm()">Создать закупку</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+document.getElementById('nav-slot').innerHTML  = navHTML('tenders.html');
+document.getElementById('footer-slot').innerHTML = footerHTML();
+
+// Populate filter selects
+const sf = document.getElementById('statusFilter');
+Object.entries(STATUSES).forEach(([k,v]) => {
+  const o = document.createElement('option'); o.value=k; o.textContent=v.label; sf.appendChild(o);
+});
+const pf = document.getElementById('prioFilter');
+Object.entries(PRIORITIES).forEach(([k,v]) => {
+  const o = document.createElement('option'); o.value=k; o.textContent=v.label; pf.appendChild(o);
+});
+const cf = document.getElementById('catFilter');
+CATEGORIES.forEach(c => {
+  const o = document.createElement('option'); o.value=c; o.textContent=c; cf.appendChild(o);
+});
+// Form selects
+const fsCat = document.getElementById('fCategory');
+CATEGORIES.forEach(c => { const o=document.createElement('option');o.value=c;o.textContent=c;fsCat.appendChild(o); });
+const fsSt = document.getElementById('fStatus');
+Object.entries(STATUSES).forEach(([k,v])=>{ const o=document.createElement('option');o.value=k;o.textContent=v.label;fsSt.appendChild(o); });
+const fsPr = document.getElementById('fPriority');
+Object.entries(PRIORITIES).forEach(([k,v])=>{ const o=document.createElement('option');o.value=k;o.textContent=v.label;fsPr.appendChild(o); });
+
+let editingId = null;
+let viewingId = null;
+
+function clearFilters() {
+  document.getElementById('searchInput').value='';
+  document.getElementById('statusFilter').value='';
+  document.getElementById('catFilter').value='';
+  document.getElementById('prioFilter').value='';
+  render();
+}
+
+function renderSummary(tasks) {
+  const active = tasks.filter(t=>t.status!=='done').length;
+  const tender = tasks.filter(t=>t.status==='tender').length;
+  const overdue = tasks.filter(t => {
+    if (!t.deadline || t.status==='done') return false;
+    return new Date(t.deadline) < new Date();
+  }).length;
+  const totalRub = tasks.filter(t=>t.currency==='RUB').reduce((s,t)=>s+(parseFloat(t.amount)||0),0);
+
+  document.getElementById('summaryRow').innerHTML = `
+    <div class="summary-card card"><div class="summary-val">${tasks.length}</div><div class="summary-lbl">Всего закупок</div></div>
+    <div class="summary-card card"><div class="summary-val" style="color:#0369a1">${active}</div><div class="summary-lbl">Активных</div></div>
+    <div class="summary-card card"><div class="summary-val" style="color:#c2410c">${tender}</div><div class="summary-lbl">На тендере</div></div>
+    <div class="summary-card card"><div class="summary-val" style="color:#991b1b">${overdue}</div><div class="summary-lbl">Просрочено</div></div>
+    <div class="summary-card card"><div class="summary-val mono" style="font-size:18px">${fmtMoney(totalRub,'RUB')}</div><div class="summary-lbl">Объём (RUB)</div></div>`;
+}
+
+function render() {
+  const allTasks = getTasks();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusF = document.getElementById('statusFilter').value;
+  const catF    = document.getElementById('catFilter').value;
+  const prioF   = document.getElementById('prioFilter').value;
+
+  const filtered = allTasks.filter(t => {
+    if (statusF && t.status !== statusF) return false;
+    if (catF && t.category !== catF) return false;
+    if (prioF && t.priority !== prioF) return false;
+    if (search) {
+      return [t.number,t.title,t.initiator,t.responsible,t.supplier,t.category]
+        .some(f => (f||'').toLowerCase().includes(search));
+    }
+    return true;
+  });
+
+  renderSummary(allTasks);
+
+  if (filtered.length === 0) {
+    document.getElementById('tableWrap').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">Ничего не найдено</div>
+        <p style="font-size:14px;color:var(--muted)">Попробуйте изменить фильтры поиска</p>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('tableWrap').innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Номер</th><th>Наименование</th><th>Категория</th>
+        <th>Сумма</th><th>Статус</th><th>Приоритет</th>
+        <th>Ответственный</th><th>Срок</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${filtered.map(t => {
+          const dl = deadlineInfo(t.deadline, t.status);
+          return `<tr onclick="openDetail('${t.id}')">
+            <td class="td-num">${esc(t.number)}</td>
+            <td class="td-title">${esc(t.title)}</td>
+            <td><span style="font-size:12px;color:var(--muted)">${esc(t.category)}</span></td>
+            <td class="td-amount">${fmtMoney(t.amount,t.currency)}</td>
+            <td>${statusBadge(t.status)}</td>
+            <td><span class="badge badge-${esc(t.priority)}">${esc((PRIORITIES[t.priority]||{label:t.priority}).label)}</span></td>
+            <td class="td-resp">${esc(t.responsible||'—')}</td>
+            <td>${dl ? `<span class="chip ${dl.cls}">${dl.label}</span>` : (t.deadline ? fmtDate(t.deadline) : '—')}</td>
+            <td onclick="event.stopPropagation()">
+              <div style="display:flex;gap:6px">
+                <button class="btn-icon" onclick="openEdit('${t.id}')" title="Редактировать">✏️</button>
+                <button class="btn-icon" onclick="deleteTask('${t.id}')" title="Удалить">🗑️</button>
+              </div>
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>`;
+}
+
+function openDetail(id) {
+  const t = getTasks().find(x=>x.id===id);
+  if (!t) return;
+  viewingId = id;
+  document.getElementById('dTitle').textContent = t.title;
+  document.getElementById('dNum').textContent = t.number;
+
+  const dl = deadlineInfo(t.deadline, t.status);
+  document.getElementById('dGrid').innerHTML = `
+    <div><div class="detail-label">Статус</div><div class="detail-value">${statusBadge(t.status)}</div></div>
+    <div><div class="detail-label">Приоритет</div><div class="detail-value"><span class="badge badge-${esc(t.priority)}">${esc((PRIORITIES[t.priority]||{label:t.priority}).label)}</span></div></div>
+    <div><div class="detail-label">Категория</div><div class="detail-value">${esc(t.category)}</div></div>
+    <div><div class="detail-label">Сумма</div><div class="detail-value mono" style="font-weight:700">${fmtMoney(t.amount,t.currency)}</div></div>
+    <div><div class="detail-label">Инициатор</div><div class="detail-value">${esc(t.initiator||'—')}</div></div>
+    <div><div class="detail-label">Ответственный</div><div class="detail-value">${esc(t.responsible||'—')}</div></div>
+    <div><div class="detail-label">Поставщик</div><div class="detail-value">${esc(t.supplier||'—')}</div></div>
+    <div><div class="detail-label">Срок</div><div class="detail-value">${dl ? `<span class="chip ${dl.cls}">${dl.label}</span> ${fmtDate(t.deadline)}` : fmtDate(t.deadline)}</div></div>`;
+
+  document.getElementById('dDesc').innerHTML = t.description
+    ? `<div class="detail-label" style="margin-top:16px">Описание</div><div class="detail-desc">${esc(t.description)}</div>` : '';
+  document.getElementById('dComment').innerHTML = t.comment
+    ? `<div class="detail-comment">💬 ${esc(t.comment)}</div>` : '';
+
+  document.getElementById('dEditBtn').onclick = () => { closeDetail(); openEdit(id); };
+  document.getElementById('dDelBtn').onclick  = () => deleteTask(id);
+  document.getElementById('detailOverlay').classList.remove('hidden');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.add('hidden');
+  viewingId = null;
+}
+
+function openCreate() {
+  editingId = null;
+  const tasks = getTasks();
+  document.getElementById('fTitle').textContent = 'Новая закупка';
+  document.getElementById('fSaveBtn').textContent = 'Создать закупку';
+  const num = genNumber(tasks);
+  document.getElementById('fNum').textContent = num;
+  document.getElementById('fNumber').value = num;
+  document.getElementById('fCategory').value = CATEGORIES[0];
+  document.getElementById('fTitleInput').value = '';
+  document.getElementById('fDesc').value = '';
+  document.getElementById('fInitiator').value = '';
+  document.getElementById('fResponsible').value = '';
+  document.getElementById('fSupplier').value = '';
+  document.getElementById('fAmount').value = '';
+  document.getElementById('fCurrency').value = 'RUB';
+  document.getElementById('fStatus').value = 'new';
+  document.getElementById('fPriority').value = 'medium';
+  document.getElementById('fDeadline').value = '';
+  document.getElementById('fComment').value = '';
+  document.getElementById('formOverlay').classList.remove('hidden');
+}
+
+function openEdit(id) {
+  const t = getTasks().find(x=>x.id===id);
+  if (!t) return;
+  editingId = id;
+  document.getElementById('fTitle').textContent = 'Редактировать закупку';
+  document.getElementById('fSaveBtn').textContent = 'Сохранить';
+  document.getElementById('fNum').textContent = t.number;
+  document.getElementById('fNumber').value = t.number;
+  document.getElementById('fCategory').value = t.category;
+  document.getElementById('fTitleInput').value = t.title;
+  document.getElementById('fDesc').value = t.description||'';
+  document.getElementById('fInitiator').value = t.initiator||'';
+  document.getElementById('fResponsible').value = t.responsible||'';
+  document.getElementById('fSupplier').value = t.supplier||'';
+  document.getElementById('fAmount').value = t.amount||'';
+  document.getElementById('fCurrency').value = t.currency||'RUB';
+  document.getElementById('fStatus').value = t.status;
+  document.getElementById('fPriority').value = t.priority;
+  document.getElementById('fDeadline').value = t.deadline||'';
+  document.getElementById('fComment').value = t.comment||'';
+  document.getElementById('formOverlay').classList.remove('hidden');
+}
+
+function closeForm() {
+  document.getElementById('formOverlay').classList.add('hidden');
+  editingId = null;
+}
+
+function saveForm() {
+  const titleVal = document.getElementById('fTitleInput').value.trim();
+  if (!titleVal) { alert('Укажите наименование закупки'); return; }
+  const tasks = getTasks();
+  const data = {
+    number:      document.getElementById('fNumber').value.trim(),
+    title:       titleVal,
+    category:    document.getElementById('fCategory').value,
+    description: document.getElementById('fDesc').value.trim(),
+    initiator:   document.getElementById('fInitiator').value.trim(),
+    responsible: document.getElementById('fResponsible').value.trim(),
+    supplier:    document.getElementById('fSupplier').value.trim(),
+    amount:      document.getElementById('fAmount').value,
+    currency:    document.getElementById('fCurrency').value,
+    status:      document.getElementById('fStatus').value,
+    priority:    document.getElementById('fPriority').value,
+    deadline:    document.getElementById('fDeadline').value,
+    comment:     document.getElementById('fComment').value.trim(),
+  };
+  if (editingId) {
+    saveTasks(tasks.map(t => t.id===editingId ? {...t,...data} : t));
+  } else {
+    saveTasks([{...data, id: Date.now().toString(36)+Math.random().toString(36).slice(2,6), createdAt: new Date().toISOString()}, ...tasks]);
+  }
+  closeForm();
+  render();
+}
+
+function deleteTask(id) {
+  if (!confirm('Удалить закупку? Это действие нельзя отменить.')) return;
+  saveTasks(getTasks().filter(t=>t.id!==id));
+  closeDetail();
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

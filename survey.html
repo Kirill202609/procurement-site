@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Опросы — Дирекция закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .survey-card{padding:32px}
+    .survey-status{display:inline-flex;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-bottom:16px}
+    .survey-status-active{background:rgba(22,101,52,0.1);color:#166534}
+    .survey-status-done{background:rgba(100,116,139,0.12);color:#64748b}
+    .survey-title{font-size:18px;font-weight:700;margin-bottom:8px}
+    .survey-desc{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:20px}
+    .survey-meta{display:flex;gap:20px;font-size:12px;color:var(--subtle);margin-bottom:20px;flex-wrap:wrap}
+    .survey-meta span{display:flex;align-items:center;gap:5px}
+    .progress-bar{height:6px;background:rgba(74,110,224,0.12);border-radius:3px;overflow:hidden;margin-bottom:6px}
+    .progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 0.6s}
+    .progress-label{font-size:11px;color:var(--subtle)}
+    .radio-option{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r-sm);background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.78);cursor:pointer;transition:all 0.15s;margin-bottom:8px;font-size:14px}
+    .radio-option:hover{background:rgba(255,255,255,0.78)}
+    .radio-option.selected{background:rgba(74,110,224,0.1);border-color:rgba(74,110,224,0.35);color:var(--primary);font-weight:600}
+    .star-rating{display:flex;gap:6px;margin-bottom:20px}
+    .star{font-size:28px;cursor:pointer;transition:transform 0.1s;user-select:none}
+    .star:hover,.star.active{transform:scale(1.15)}
+    .result-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .result-label{font-size:13px;min-width:140px;color:var(--muted)}
+    .result-track{flex:1;height:10px;background:rgba(74,110,224,0.1);border-radius:5px;overflow:hidden}
+    .result-fill{height:100%;background:var(--primary);border-radius:5px}
+    .result-pct{font-size:12px;font-weight:700;color:var(--primary);min-width:36px;text-align:right}
+  </style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section style="padding:60px 0 40px">
+  <div class="container">
+    <div class="hero-tag">Обратная связь</div>
+    <h1 class="hero-title" style="font-size:clamp(34px,4vw,52px);margin-bottom:12px">
+      Опросы и <span>оценки</span>
+    </h1>
+    <p style="font-size:16px;color:var(--muted);line-height:1.65;max-width:520px">
+      Помогите улучшить работу дирекции закупок — пройдите активные опросы и оцените качество сервиса.
+    </p>
+  </div>
+</section>
+
+<section style="padding:0 0 80px">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start">
+
+      <!-- LEFT: active surveys -->
+      <div>
+        <div class="section-tag" style="margin-bottom:16px">Активные опросы</div>
+
+        <!-- Survey 1: radio -->
+        <div class="card survey-card card-hover" style="margin-bottom:20px" id="s1">
+          <div class="survey-status survey-status-active">Открыт</div>
+          <div class="survey-title">Как вы оцениваете скорость обработки заявок?</div>
+          <div class="survey-desc">Помогите нам понять, насколько своевременно дирекция закупок реагирует на ваши запросы.</div>
+          <div class="survey-meta">
+            <span>📅 До 31 мая 2026</span>
+            <span>👥 <span id="s1count">12</span> ответов</span>
+          </div>
+          <div id="s1form">
+            <div class="radio-option" onclick="selectOption(this,'s1','Очень быстро')">Очень быстро — укладываемся в сроки</div>
+            <div class="radio-option" onclick="selectOption(this,'s1','Нормально')">Нормально — небольшие задержки бывают</div>
+            <div class="radio-option" onclick="selectOption(this,'s1','Медленно')">Медленно — задержки мешают работе</div>
+            <div class="radio-option" onclick="selectOption(this,'s1','Критически медленно')">Критически медленно — серьёзная проблема</div>
+            <div style="margin-top:16px">
+              <button class="btn btn-primary" onclick="submitSurvey('s1')" id="s1btn" disabled style="opacity:0.5">Отправить ответ</button>
+            </div>
+          </div>
+          <div id="s1result" class="hidden">
+            <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:#166534">✓ Спасибо за ответ!</div>
+            <div class="result-bar"><span class="result-label">Очень быстро</span><div class="result-track"><div class="result-fill" style="width:45%"></div></div><span class="result-pct">45%</span></div>
+            <div class="result-bar"><span class="result-label">Нормально</span><div class="result-track"><div class="result-fill" style="width:35%"></div></div><span class="result-pct">35%</span></div>
+            <div class="result-bar"><span class="result-label">Медленно</span><div class="result-track"><div class="result-fill" style="width:15%"></div></div><span class="result-pct">15%</span></div>
+            <div class="result-bar"><span class="result-label">Критически</span><div class="result-track"><div class="result-fill" style="width:5%"></div></div><span class="result-pct">5%</span></div>
+          </div>
+        </div>
+
+        <!-- Survey 2: stars -->
+        <div class="card survey-card card-hover" style="margin-bottom:20px" id="s2">
+          <div class="survey-status survey-status-active">Открыт</div>
+          <div class="survey-title">Оцените качество коммуникации с менеджерами</div>
+          <div class="survey-desc">Насколько понятно и своевременно менеджеры дирекции информируют вас о ходе закупок?</div>
+          <div class="survey-meta">
+            <span>📅 До 15 июня 2026</span>
+            <span>👥 <span id="s2count">8</span> ответов</span>
+          </div>
+          <div id="s2form">
+            <div class="star-rating" id="stars">
+              <span class="star" onclick="rateStar(1)">☆</span>
+              <span class="star" onclick="rateStar(2)">☆</span>
+              <span class="star" onclick="rateStar(3)">☆</span>
+              <span class="star" onclick="rateStar(4)">☆</span>
+              <span class="star" onclick="rateStar(5)">☆</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Комментарий (необязательно)</label>
+              <textarea class="input" id="s2comment" placeholder="Что можно улучшить?" style="min-height:72px"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="submitSurvey('s2')" id="s2btn" disabled style="opacity:0.5;margin-top:8px">Отправить оценку</button>
+          </div>
+          <div id="s2result" class="hidden">
+            <div style="margin-bottom:16px;font-size:13px;font-weight:600;color:#166534">✓ Спасибо! Средняя оценка: 4,3 / 5</div>
+            <div class="result-bar"><span class="result-label">★★★★★ (5)</span><div class="result-track"><div class="result-fill" style="width:50%"></div></div><span class="result-pct">50%</span></div>
+            <div class="result-bar"><span class="result-label">★★★★☆ (4)</span><div class="result-track"><div class="result-fill" style="width:30%"></div></div><span class="result-pct">30%</span></div>
+            <div class="result-bar"><span class="result-label">★★★☆☆ (3)</span><div class="result-track"><div class="result-fill" style="width:13%"></div></div><span class="result-pct">13%</span></div>
+            <div class="result-bar"><span class="result-label">★★☆☆☆ (2)</span><div class="result-track"><div class="result-fill" style="width:7%"></div></div><span class="result-pct">7%</span></div>
+          </div>
+        </div>
+
+        <!-- Survey 3: past -->
+        <div class="section-tag" style="margin-bottom:16px;margin-top:32px">Завершённые</div>
+        <div class="card survey-card" style="opacity:0.75">
+          <div class="survey-status survey-status-done">Закрыт</div>
+          <div class="survey-title">Удовлетворённость процессом тендера Q1 2026</div>
+          <div class="survey-desc">Оценка прозрачности и справедливости тендерных процедур в первом квартале.</div>
+          <div class="survey-meta">
+            <span>📅 Завершён 30 апреля 2026</span>
+            <span>👥 47 ответов</span>
+          </div>
+          <div>
+            <div class="result-bar"><span class="result-label">Полностью доволен</span><div class="result-track"><div class="result-fill" style="width:57%"></div></div><span class="result-pct">57%</span></div>
+            <div class="result-bar"><span class="result-label">В основном доволен</span><div class="result-track"><div class="result-fill" style="width:30%"></div></div><span class="result-pct">30%</span></div>
+            <div class="result-bar"><span class="result-label">Нейтрально</span><div class="result-track"><div class="result-fill" style="width:9%"></div></div><span class="result-pct">9%</span></div>
+            <div class="result-bar"><span class="result-label">Недоволен</span><div class="result-track"><div class="result-fill" style="width:4%"></div></div><span class="result-pct">4%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: stats + feedback form -->
+      <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:16px">
+        <div class="card" style="padding:24px">
+          <div class="section-tag" style="margin-bottom:12px">Статистика</div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div>
+              <div style="font-size:28px;font-weight:800;color:var(--primary)">87%</div>
+              <div style="font-size:12px;color:var(--muted)">Удовлетворённость работой дирекции</div>
+            </div>
+            <div class="divider"></div>
+            <div>
+              <div style="font-size:28px;font-weight:800;color:var(--primary)">4,3</div>
+              <div style="font-size:12px;color:var(--muted)">Средняя оценка за Q1 2026 (из 5)</div>
+            </div>
+            <div class="divider"></div>
+            <div>
+              <div style="font-size:28px;font-weight:800;color:var(--primary)">62</div>
+              <div style="font-size:12px;color:var(--muted)">Ответов собрано в этом квартале</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:24px">
+          <div class="section-tag" style="margin-bottom:12px">Обращение</div>
+          <h4 style="font-size:15px;font-weight:700;margin-bottom:8px">Есть предложение?</h4>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5">Напишите нам напрямую — все предложения рассматриваются и влияют на процессы.</p>
+          <textarea class="input" id="freeComment" placeholder="Ваше предложение или замечание..." style="min-height:80px;margin-bottom:10px"></textarea>
+          <button class="btn btn-primary" style="width:100%" onclick="sendFeedback()">Отправить</button>
+          <div id="feedbackOk" class="hidden" style="margin-top:10px;font-size:13px;color:#166534;font-weight:600">✓ Спасибо, мы изучим ваше предложение!</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="app.js"></script>
+<script>
+document.getElementById('nav-slot').innerHTML   = navHTML('survey.html');
+document.getElementById('footer-slot').innerHTML = footerHTML();
+
+let s1selected = null;
+let s2rating   = 0;
+
+function selectOption(el, surveyId, val) {
+  document.querySelectorAll(`#${surveyId}form .radio-option`).forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  s1selected = val;
+  const btn = document.getElementById(`${surveyId}btn`);
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function rateStar(n) {
+  s2rating = n;
+  const stars = document.querySelectorAll('#stars .star');
+  stars.forEach((s, i) => { s.textContent = i < n ? '★' : '☆'; s.classList.toggle('active', i < n); });
+  const btn = document.getElementById('s2btn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function submitSurvey(id) {
+  document.getElementById(`${id}form`).classList.add('hidden');
+  document.getElementById(`${id}result`).classList.remove('hidden');
+  const countEl = document.getElementById(`${id}count`);
+  countEl.textContent = parseInt(countEl.textContent) + 1;
+}
+
+function sendFeedback() {
+  const txt = document.getElementById('freeComment').value.trim();
+  if (!txt) return;
+  document.getElementById('freeComment').value = '';
+  document.getElementById('feedbackOk').classList.remove('hidden');
+  setTimeout(() => document.getElementById('feedbackOk').classList.add('hidden'), 4000);
+}
+</script>
+</body>
+</html>

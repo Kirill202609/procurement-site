@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Новости — Дирекция закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<!-- HERO -->
+<section style="padding:60px 0 40px">
+  <div class="container">
+    <div class="hero-tag">Новости и объявления</div>
+    <h1 class="hero-title" style="font-size:clamp(34px,4vw,52px);margin-bottom:12px">
+      Последние <span>обновления</span>
+    </h1>
+    <p style="font-size:16px;color:var(--muted);line-height:1.65;max-width:520px">
+      Объявления дирекции закупок, итоги тендеров и важные изменения в регламентах.
+    </p>
+  </div>
+</section>
+
+<!-- FILTERS + SEARCH -->
+<section style="padding:0 0 32px">
+  <div class="container">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="input" id="searchInput" placeholder="Поиск по новостям..." style="min-width:260px" oninput="render()">
+      </div>
+      <div id="tagFilters" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS GRID -->
+<section style="padding:0 0 80px">
+  <div class="container">
+    <div id="newsCount" style="font-size:13px;color:var(--muted);margin-bottom:20px"></div>
+    <div id="newsGrid" class="news-grid"></div>
+    <div id="emptyState" class="empty-state hidden">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Ничего не найдено</div>
+      <div style="font-size:13px;color:var(--subtle);margin-top:6px">Попробуйте изменить поисковый запрос или фильтр</div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="app.js"></script>
+<script>
+document.getElementById('nav-slot').innerHTML   = navHTML('news.html');
+document.getElementById('footer-slot').innerHTML = footerHTML();
+
+const TAGS = ['Все', ...new Set(NEWS.map(n => n.tag))];
+let activeTag = 'Все';
+
+// Build tag filter buttons
+const tagFilters = document.getElementById('tagFilters');
+TAGS.forEach(tag => {
+  const btn = document.createElement('button');
+  btn.className = 'btn btn-ghost btn-sm';
+  btn.textContent = tag;
+  btn.dataset.tag = tag;
+  btn.addEventListener('click', () => {
+    activeTag = tag;
+    document.querySelectorAll('#tagFilters button').forEach(b => {
+      b.style.background = b.dataset.tag === activeTag ? 'var(--primary)' : '';
+      b.style.color      = b.dataset.tag === activeTag ? 'white' : '';
+      b.style.border     = b.dataset.tag === activeTag ? 'none' : '';
+    });
+    render();
+  });
+  if (tag === 'Все') {
+    btn.style.background = 'var(--primary)';
+    btn.style.color = 'white';
+    btn.style.border = 'none';
+  }
+  tagFilters.appendChild(btn);
+});
+
+function render() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = NEWS.filter(n => {
+    const matchTag  = activeTag === 'Все' || n.tag === activeTag;
+    const matchText = !query || n.title.toLowerCase().includes(query) || n.body.toLowerCase().includes(query);
+    return matchTag && matchText;
+  });
+
+  const grid  = document.getElementById('newsGrid');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('newsCount');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    count.textContent = '';
+    return;
+  }
+
+  grid.classList.remove('hidden');
+  empty.classList.add('hidden');
+  count.textContent = `Показано: ${filtered.length} из ${NEWS.length}`;
+
+  grid.innerHTML = filtered.map((n, i) => `
+    <div class="news-card card card-hover" style="${i === 0 && activeTag === 'Все' && !query ? 'grid-column:span 2' : ''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;gap:8px">
+        <div class="news-type" style="background:${n.tagColor};color:${n.tagText}">${n.tag}</div>
+        <div class="news-date" style="margin-top:0;flex-shrink:0">${n.date}</div>
+      </div>
+      <div class="news-title" style="${i === 0 && activeTag === 'Все' && !query ? 'font-size:20px' : ''}">${n.title}</div>
+      <div class="news-body">${n.body}</div>
+    </div>`).join('');
+}
+
+render();
+</script>
+</body>
+</html>

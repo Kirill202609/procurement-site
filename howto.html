@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Как купить? — Дирекция закупок</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .steps-list{display:flex;flex-direction:column;gap:16px;max-width:780px}
+    .step-item{display:flex;gap:20px;align-items:flex-start}
+    .step-dot{width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;margin-top:4px}
+    .step-body{flex:1;padding:20px 24px;border-radius:var(--r-lg)}
+    .step-title{font-size:16px;font-weight:700;margin-bottom:6px}
+    .step-text{font-size:13px;color:var(--muted);line-height:1.6}
+    .step-tip{margin-top:10px;padding:10px 14px;background:rgba(74,110,224,0.08);border-radius:var(--r-sm);font-size:12px;color:var(--primary);display:flex;gap:8px;align-items:flex-start}
+    .faq-item{border-radius:var(--r-lg);overflow:hidden;margin-bottom:10px}
+    .faq-q{padding:18px 24px;font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.78);border-radius:var(--r-lg);transition:background 0.15s}
+    .faq-q:hover{background:rgba(255,255,255,0.78)}
+    .faq-q.open{border-radius:var(--r-lg) var(--r-lg) 0 0;border-bottom:none}
+    .faq-a{padding:16px 24px;font-size:13px;color:var(--muted);line-height:1.65;background:rgba(255,255,255,0.35);border:1px solid rgba(255,255,255,0.78);border-top:none;border-radius:0 0 var(--r-lg) var(--r-lg);display:none}
+    .faq-a.open{display:block}
+    .threshold-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px}
+    .thr-card{padding:24px;text-align:center}
+    .thr-amount{font-size:22px;font-weight:800;color:var(--primary);margin-bottom:6px}
+    .thr-label{font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .thr-desc{font-size:12px;color:var(--muted);line-height:1.5}
+    @media(max-width:700px){.threshold-grid{grid-template-columns:1fr}.step-item{flex-direction:column}.step-dot{width:32px;height:32px;font-size:14px}}
+  </style>
+</head>
+<body>
+
+<div id="nav-slot"></div>
+
+<section style="padding:60px 0 40px">
+  <div class="container">
+    <div class="hero-tag">Инструкция для сотрудников</div>
+    <h1 class="hero-title" style="font-size:clamp(34px,4vw,52px);margin-bottom:12px">
+      Как <span>инициировать закупку?</span>
+    </h1>
+    <p style="font-size:16px;color:var(--muted);line-height:1.65;max-width:560px">
+      Пошаговое руководство для сотрудников компании: от потребности до получения товара или услуги.
+    </p>
+  </div>
+</section>
+
+<!-- THRESHOLDS -->
+<section style="padding:0 0 20px">
+  <div class="container">
+    <div class="section-tag" style="margin-bottom:16px">Пороги согласования</div>
+    <h2 class="section-title" style="margin-bottom:20px">Кто согласовывает?</h2>
+    <div class="threshold-grid">
+      <div class="card thr-card card-hover">
+        <div class="thr-amount">до 50 000 ₽</div>
+        <div class="thr-label">Малая закупка</div>
+        <div class="thr-desc">Согласование руководителя подразделения. Прямой договор без тендера.</div>
+      </div>
+      <div class="card thr-card card-hover">
+        <div class="thr-amount">50 000 — 500 000 ₽</div>
+        <div class="thr-label">Средняя закупка</div>
+        <div class="thr-desc">Согласование директора + дирекция закупок. Обязательный запрос 3 КП.</div>
+      </div>
+      <div class="card thr-card card-hover" style="background:rgba(74,110,224,0.08)">
+        <div class="thr-amount">от 500 000 ₽</div>
+        <div class="thr-label">Крупная закупка</div>
+        <div class="thr-desc">Согласование ГД + тендерная процедура. Срок рассмотрения до 5 рабочих дней.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section style="padding:0 0 48px">
+  <div class="container">
+    <div class="section-tag" style="margin-bottom:16px">Пошаговый процесс</div>
+    <h2 class="section-title" style="margin-bottom:28px">Шаги от заявки до оплаты</h2>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-dot">1</div>
+        <div class="step-body card">
+          <div class="step-title">Оформите заявку на закупку</div>
+          <div class="step-text">Заполните форму в реестре закупок: укажите наименование, количество, требования к качеству, желаемые сроки и бюджет. Приложите техническое задание если необходимо.</div>
+          <div class="step-tip">💡 Используйте шаблон ТЗ из раздела Документы — это ускорит согласование.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-dot">2</div>
+        <div class="step-body card">
+          <div class="step-title">Согласование заявки</div>
+          <div class="step-text">Ваш непосредственный руководитель согласует заявку в системе. При сумме от 500 000 ₽ подключается финансовый отдел и директор. Срок согласования — 1–3 рабочих дня.</div>
+          <div class="step-tip">⚠️ Убедитесь, что расходы предусмотрены в бюджете подразделения на текущий квартал.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-dot">3</div>
+        <div class="step-body card">
+          <div class="step-title">Дирекция закупок берёт в работу</div>
+          <div class="step-text">После согласования ответственный менеджер по закупкам свяжется с вами для уточнения деталей. При необходимости проводится тендер среди аккредитованных поставщиков.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-dot">4</div>
+        <div class="step-body card">
+          <div class="step-title">Выбор поставщика и договор</div>
+          <div class="step-text">Дирекция закупок выбирает оптимального поставщика по цене и качеству. Договор оформляется юридическим отделом и подписывается в течение 10 рабочих дней.</div>
+          <div class="step-tip">💡 Вы можете предложить конкретного поставщика — дирекция рассмотрит его наравне с другими.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-dot">5</div>
+        <div class="step-body card">
+          <div class="step-title">Поставка и приёмка</div>
+          <div class="step-text">Вы принимаете товар или результат услуги, проверяете соответствие заявке и подписываете акт приёма-передачи. При несоответствии — составляется рекламация.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-dot">6</div>
+        <div class="step-body card">
+          <div class="step-title">Закрытие и оплата</div>
+          <div class="step-text">Подписанные закрывающие документы (акт, счёт-фактура, УПД) передаются в бухгалтерию. Оплата производится в течение 14 дней.</div>
+          <div class="step-tip">📋 Все документы передавайте через ЭДО — с 1 июля 2026 это обязательно.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;text-align:center">
+      <a href="tenders.html" class="btn btn-primary" style="margin-right:12px">Создать заявку на закупку</a>
+      <a href="docs.html" class="btn btn-ghost">Скачать шаблон ТЗ</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="padding:0 0 80px">
+  <div class="container">
+    <div class="section-tag" style="margin-bottom:16px">Частые вопросы</div>
+    <h2 class="section-title" style="margin-bottom:24px">FAQ</h2>
+    <div style="max-width:780px">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Можно ли купить что-то без участия дирекции закупок? <span>›</span></div>
+        <div class="faq-a">Да, для закупок до 5 000 ₽ сотрудник может приобрести товар самостоятельно и возместить расходы через авансовый отчёт с чеками. Свыше 5 000 ₽ — обязательное участие дирекции.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Сколько времени займёт весь процесс? <span>›</span></div>
+        <div class="faq-a">Малая закупка — 3–7 рабочих дней. Средняя (с запросом КП) — 10–15 дней. Тендер — 20–30 дней. Сроки зависят от сложности требований и скорости согласования.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Что если мне нужно срочно? <span>›</span></div>
+        <div class="faq-a">При срочности обратитесь напрямую к менеджеру дирекции с пометкой «Срочно». Критические закупки (угроза остановки производства) рассматриваются в приоритетном порядке в течение 1–2 дней.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Можно ли работать с иностранным поставщиком? <span>›</span></div>
+        <div class="faq-a">Да, но потребуется дополнительное согласование с юридическим и финансовым отделом. Учтите валютный контроль и более длительные сроки поставки.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Как отследить статус своей заявки? <span>›</span></div>
+        <div class="faq-a">В разделе «Реестр закупок» найдите свою заявку — там отображается текущий статус и ответственный менеджер. При изменении статуса вы получите уведомление на корпоративную почту.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-slot"></div>
+
+<script src="app.js"></script>
+<script>
+document.getElementById('nav-slot').innerHTML   = navHTML('howto.html');
+document.getElementById('footer-slot').innerHTML = footerHTML();
+
+function toggleFaq(el) {
+  const ans = el.nextElementSibling;
+  const isOpen = ans.classList.contains('open');
+  document.querySelectorAll('.faq-q').forEach(q => { q.classList.remove('open'); q.querySelector('span').textContent = '›'; });
+  document.querySelectorAll('.faq-a').forEach(a => a.classList.remove('open'));
+  if (!isOpen) {
+    el.classList.add('open');
+    el.querySelector('span').textContent = '‹';
+    ans.classList.add('open');
+  }
+}
+</script>
+</body>
+</html>

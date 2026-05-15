@@ -3,40 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Дирекция закупок — Корпоративный портал</title>
+  <title>Дашборд — Дирекция закупок</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:40px}
+    .qa-card{padding:20px 18px;border-radius:var(--r-lg);display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--text);transition:all 0.15s;cursor:pointer}
+    .qa-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+    .qa-icon{font-size:24px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .qa-label{font-size:13px;font-weight:700}
+    .qa-sub{font-size:11px;color:var(--muted);margin-top:2px}
+    .pipeline-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:40px}
+    .pipe-card{padding:16px 12px;text-align:center;border-radius:var(--r-lg)}
+    .pipe-count{font-size:26px;font-weight:800;line-height:1;margin-bottom:6px}
+    .pipe-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted)}
+    .pipe-bar{height:3px;border-radius:2px;margin-top:10px}
+    .urgent-badge{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(220,38,38,0.12);color:#dc2626}
+    @media(max-width:1100px){.quick-actions{grid-template-columns:repeat(2,1fr)}.pipeline-grid{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:600px){.quick-actions{grid-template-columns:1fr 1fr}.pipeline-grid{grid-template-columns:repeat(2,1fr)}}
+  </style>
 </head>
 <body>
 
 <div id="nav-slot"></div>
 
-<!-- HERO -->
-<section class="hero">
+<!-- HEADER -->
+<section style="padding:40px 0 32px">
   <div class="container">
-    <div class="hero-layout">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
       <div>
-        <div class="hero-tag">Корпоративный портал</div>
-        <h1 class="hero-title">Дирекция<br><span>закупок</span></h1>
-        <p class="hero-sub">Централизованное управление закупочной деятельностью. Прозрачность, эффективность и контроль на каждом этапе — от заявки до поставки.</p>
-        <div class="hero-actions">
-          <a href="tenders.html" class="btn btn-primary">Реестр закупок</a>
-          <a href="suppliers.html" class="btn btn-ghost">Стать поставщиком</a>
+        <div style="display:inline-flex;align-items:center;gap:7px;padding:4px 12px;background:rgba(22,101,52,0.1);border-radius:20px;font-size:11px;font-weight:700;color:#166534;margin-bottom:10px">
+          <span style="width:6px;height:6px;background:#22c55e;border-radius:50%;display:inline-block"></span>
+          Внутренний портал · Служба закупок
         </div>
+        <h1 style="font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:4px">Дашборд дирекции закупок</h1>
+        <p style="font-size:14px;color:var(--muted)" id="todayDate"></p>
       </div>
-      <div class="hero-stats" id="heroStats"></div>
+      <a href="tenders.html" class="btn btn-primary">+ Новая закупка</a>
     </div>
   </div>
 </section>
 
-<!-- ACTIVE TENDERS -->
-<section class="section" style="padding-top:0">
+<!-- QUICK ACTIONS -->
+<section style="padding:0 0 8px">
+  <div class="container">
+    <div class="quick-actions">
+      <a href="tenders.html" class="qa-card card card-hover">
+        <div class="qa-icon" style="background:rgba(74,110,224,0.12)">📋</div>
+        <div><div class="qa-label">Реестр закупок</div><div class="qa-sub" id="qaActive"></div></div>
+      </a>
+      <a href="suppliers.html" class="qa-card card card-hover">
+        <div class="qa-icon" style="background:rgba(22,101,52,0.1)">🏢</div>
+        <div><div class="qa-label">Поставщики</div><div class="qa-sub" id="qaSuppliers"></div></div>
+      </a>
+      <a href="docs.html" class="qa-card card card-hover">
+        <div class="qa-icon" style="background:rgba(109,40,217,0.1)">📁</div>
+        <div><div class="qa-label">Документы</div><div class="qa-sub">Шаблоны и регламенты</div></div>
+      </a>
+      <a href="howto.html" class="qa-card card card-hover">
+        <div class="qa-icon" style="background:rgba(161,98,7,0.1)">❓</div>
+        <div><div class="qa-label">Как купить?</div><div class="qa-sub">Инструкция для сотрудников</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section style="padding:0 0 32px">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div class="section-tag">Воронка</div>
+        <h2 class="section-title">Статус закупок</h2>
+      </div>
+      <div id="urgentWrap"></div>
+    </div>
+    <div class="pipeline-grid" id="pipelineGrid"></div>
+  </div>
+</section>
+
+<!-- DEADLINES TABLE -->
+<section style="padding:0 0 32px">
   <div class="container">
     <div class="section-header">
       <div>
-        <div class="section-tag">Текущие закупки</div>
+        <div class="section-tag">Контроль сроков</div>
         <h2 class="section-title">Ближайшие дедлайны</h2>
       </div>
       <a href="tenders.html" class="btn btn-ghost btn-sm">Все закупки →</a>
@@ -47,37 +100,36 @@
   </div>
 </section>
 
-<!-- CATEGORIES -->
-<section class="section">
+<!-- BOTTOM GRID: suppliers pending + news -->
+<section style="padding:0 0 80px">
   <div class="container">
-    <div class="section-tag">Направления</div>
-    <h2 class="section-title" style="margin-bottom:8px">Категории закупок</h2>
-    <p class="section-sub" style="margin-bottom:28px">Основные направления закупочной деятельности компании</p>
-    <div class="categories-grid" id="catsGrid"></div>
-  </div>
-</section>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
 
-<!-- PROCESS -->
-<section class="section">
-  <div class="container">
-    <div class="section-tag">Как работаем</div>
-    <h2 class="section-title" style="margin-bottom:8px">Процесс закупок</h2>
-    <p class="section-sub" style="margin-bottom:32px">Семиэтапный прозрачный цикл — от заявки до закрытия</p>
-    <div class="process-steps" id="processSteps"></div>
-  </div>
-</section>
-
-<!-- NEWS -->
-<section class="section">
-  <div class="container">
-    <div class="section-header">
+      <!-- Pending suppliers -->
       <div>
-        <div class="section-tag">Новости</div>
-        <h2 class="section-title">Последние обновления</h2>
+        <div class="section-header" style="margin-bottom:16px">
+          <div>
+            <div class="section-tag">Аккредитация</div>
+            <h2 class="section-title">На проверке</h2>
+          </div>
+          <a href="suppliers.html" class="btn btn-ghost btn-sm">Все →</a>
+        </div>
+        <div class="card" style="overflow:hidden" id="pendingSuppliers"></div>
       </div>
-      <a href="news.html" class="btn btn-ghost btn-sm">Все новости →</a>
+
+      <!-- News -->
+      <div>
+        <div class="section-header" style="margin-bottom:16px">
+          <div>
+            <div class="section-tag">Объявления</div>
+            <h2 class="section-title">Последние новости</h2>
+          </div>
+          <a href="news.html" class="btn btn-ghost btn-sm">Все →</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px" id="newsList"></div>
+      </div>
+
     </div>
-    <div class="news-grid" id="newsGrid"></div>
   </div>
 </section>
 
@@ -85,58 +137,72 @@
 
 <script src="app.js"></script>
 <script>
-document.getElementById('nav-slot').innerHTML = navHTML('index.html');
+document.getElementById('nav-slot').innerHTML   = navHTML('index.html');
 document.getElementById('footer-slot').innerHTML = footerHTML();
 
 const tasks = getTasks();
 
-// Hero stats
-const active = tasks.filter(t => t.status !== 'done');
-const done   = tasks.filter(t => t.status === 'done');
-const totalRub = tasks.filter(t => t.currency==='RUB').reduce((s,t)=>s+(parseFloat(t.amount)||0),0);
-const suppliers = [...new Set(tasks.map(t=>t.supplier).filter(Boolean))].length;
+// Date
+document.getElementById('todayDate').textContent =
+  new Date().toLocaleDateString('ru-RU', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
 
-document.getElementById('heroStats').innerHTML = `
-  <div class="stat-card card-dark stat-dark">
-    <div class="stat-value">${active.length}</div>
-    <div class="stat-label">Активных закупок</div>
-    <div class="stat-change up">↑ 3 за эту неделю</div>
-  </div>
-  <div class="stat-card card stat-light">
-    <div class="stat-value">${fmtMoney(totalRub,'RUB').replace(' ₽',' <span style="font-size:22px;color:var(--muted)">₽</span>')}</div>
-    <div class="stat-label">Общий объём (RUB)</div>
-    <div class="stat-change up">↑ 12% к плану</div>
-  </div>
-  <div class="stat-card card stat-light">
-    <div class="stat-value">${suppliers}</div>
-    <div class="stat-label">Поставщиков</div>
-    <div class="stat-change up">↑ 2 новых</div>
-  </div>
-  <div class="stat-card card-dark stat-dark">
-    <div class="stat-value">${done.length}</div>
-    <div class="stat-label">Завершено в 2026</div>
-    <div class="stat-change up">↑ 92% в срок</div>
+// Quick action subtitles
+const activeTasks = tasks.filter(t => t.status !== 'done');
+document.getElementById('qaActive').textContent  = activeTasks.length + ' активных';
+const accredited = SUPPLIERS.filter(s => s.status === 'accredited').length;
+document.getElementById('qaSuppliers').textContent = accredited + ' аккредитовано';
+
+// Pipeline
+const PIPE = [
+  { key:'new',         label:'Новые',        color:'#64748b' },
+  { key:'in_progress', label:'В работе',     color:'#0369a1' },
+  { key:'approval',    label:'Согласование', color:'#a16207' },
+  { key:'tender',      label:'Тендер',       color:'#c2410c' },
+  { key:'contract',    label:'Договор',      color:'#6d28d9' },
+  { key:'delivery',    label:'Поставка',     color:'#0f766e' },
+  { key:'done',        label:'Завершено',    color:'#166534' },
+];
+const countByStatus = {};
+tasks.forEach(t => { countByStatus[t.status] = (countByStatus[t.status]||0)+1; });
+const maxCount = Math.max(...PIPE.map(p => countByStatus[p.key]||0), 1);
+
+document.getElementById('pipelineGrid').innerHTML = PIPE.map(p => {
+  const n = countByStatus[p.key] || 0;
+  const pct = Math.round(n / maxCount * 100);
+  return `<div class="pipe-card card">
+    <div class="pipe-count" style="color:${p.color}">${n}</div>
+    <div class="pipe-label">${p.label}</div>
+    <div class="pipe-bar" style="background:${p.color};opacity:${0.15 + pct/100*0.85}"></div>
   </div>`;
+}).join('');
 
-// Tenders preview (5 non-done sorted by deadline)
+// Urgent count
+const urgent = tasks.filter(t => {
+  if (t.status === 'done') return false;
+  const days = Math.ceil((new Date(t.deadline||'9999') - Date.now()) / 86400000);
+  return days <= 3;
+});
+if (urgent.length > 0) {
+  document.getElementById('urgentWrap').innerHTML =
+    `<span class="urgent-badge">⚠ ${urgent.length} просрочено / горит</span>`;
+}
+
+// Tenders preview — сортировка по дедлайну, топ-6
 const preview = [...tasks]
   .filter(t => t.status !== 'done')
   .sort((a,b) => new Date(a.deadline||'9999') - new Date(b.deadline||'9999'))
-  .slice(0,5);
+  .slice(0,6);
 
-if (preview.length === 0) {
-  document.getElementById('tendersPreview').innerHTML =
-    '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Нет активных закупок</div></div>';
-} else {
-  document.getElementById('tendersPreview').innerHTML = `
-    <table>
+document.getElementById('tendersPreview').innerHTML = preview.length === 0
+  ? '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Нет активных закупок</div></div>'
+  : `<table>
       <thead><tr>
         <th>Номер</th><th>Наименование</th><th>Сумма</th><th>Статус</th><th>Срок</th><th>Ответственный</th>
       </tr></thead>
       <tbody>
         ${preview.map(t => {
           const dl = deadlineInfo(t.deadline, t.status);
-          return `<tr onclick="location.href='tenders.html'">
+          return `<tr onclick="location.href='tenders.html'" style="${dl?.cls==='chip-red'?'background:rgba(239,68,68,0.04)':''}">
             <td class="td-num">${esc(t.number)}</td>
             <td class="td-title">${esc(t.title)}</td>
             <td class="td-amount">${fmtMoney(t.amount,t.currency)}</td>
@@ -147,56 +213,34 @@ if (preview.length === 0) {
         }).join('')}
       </tbody>
     </table>`;
-}
 
-// Categories
-const CAT_DATA = [
-  { icon:'💻', name:'IT и ПО',              color:'rgba(3,105,161,0.1)',  count: tasks.filter(t=>t.category==='IT и ПО').length },
-  { icon:'⚙️', name:'Оборудование',         color:'rgba(74,110,224,0.1)', count: tasks.filter(t=>t.category==='Оборудование').length },
-  { icon:'🔧', name:'Строительство/Ремонт', color:'rgba(15,118,110,0.1)', count: tasks.filter(t=>t.category==='Строительство/Ремонт').length },
-  { icon:'📋', name:'Услуги',               color:'rgba(109,40,217,0.1)', count: tasks.filter(t=>t.category==='Услуги').length },
-  { icon:'📦', name:'Канцелярия',           color:'rgba(161,98,7,0.1)',   count: tasks.filter(t=>t.category==='Канцелярия').length },
-  { icon:'🎓', name:'Обучение',             color:'rgba(22,101,52,0.1)',  count: tasks.filter(t=>t.category==='Обучение').length },
-  { icon:'📊', name:'Консалтинг',           color:'rgba(194,65,12,0.1)',  count: tasks.filter(t=>t.category==='Консалтинг').length },
-  { icon:'📣', name:'Маркетинг',            color:'rgba(100,116,139,0.1)',count: tasks.filter(t=>t.category==='Маркетинг').length },
-];
+// Pending suppliers
+const pending = SUPPLIERS.filter(s => s.status === 'pending');
+document.getElementById('pendingSuppliers').innerHTML = pending.length === 0
+  ? '<div class="empty-state" style="padding:32px"><div class="empty-icon">✅</div><div class="empty-title">Заявок на проверке нет</div></div>'
+  : `<table>
+      <thead><tr><th>Компания</th><th>ИНН</th><th>Категории</th><th>Дата заявки</th></tr></thead>
+      <tbody>
+        ${pending.map(s => `<tr onclick="location.href='suppliers.html'">
+          <td style="font-weight:600;font-size:13px">${esc(s.name)}</td>
+          <td class="td-num">${esc(s.inn)}</td>
+          <td style="font-size:12px;color:var(--muted)">${s.cats.join(', ')}</td>
+          <td class="td-num">${fmtDate(s.since)}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
 
-document.getElementById('catsGrid').innerHTML = CAT_DATA.map(c => `
-  <div class="cat-card card card-hover" style="background:${c.color};border-color:rgba(255,255,255,0.6)">
-    <div class="cat-icon">${c.icon}</div>
-    <div class="cat-name">${c.name}</div>
-    <div class="cat-count">${c.count} закуп${c.count===1?'ка':'ки'} в реестре</div>
-  </div>`).join('');
-
-// Process steps
-const STEPS = [
-  { label:'Новая',       sub:'Поступила заявка' },
-  { label:'В работе',    sub:'Анализ потребности' },
-  { label:'Согласование',sub:'Бюджет и ТЗ' },
-  { label:'Тендер',      sub:'Сбор предложений' },
-  { label:'Договор',     sub:'Оформление' },
-  { label:'Поставка',    sub:'Исполнение' },
-  { label:'Завершена',   sub:'Закрытие акты' },
-];
-
-document.getElementById('processSteps').innerHTML = STEPS.map((s,i) => `
-  <div class="step-wrap">
-    <div class="step-card card">
-      <div class="step-num">Этап ${i+1}</div>
-      <div class="step-name">${s.label}</div>
-      <div class="step-sub">${s.sub}</div>
+// News compact list
+document.getElementById('newsList').innerHTML = NEWS.slice(0,4).map(n => `
+  <a href="news.html" style="text-decoration:none;color:inherit" class="card card-hover" style="">
+    <div style="padding:16px 20px;display:flex;gap:12px;align-items:flex-start">
+      <div style="padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;background:${n.tagColor};color:${n.tagText};white-space:nowrap;flex-shrink:0">${n.tag}</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;margin-bottom:3px;line-height:1.35">${n.title}</div>
+        <div style="font-size:11px;color:var(--subtle)">${n.date}</div>
+      </div>
     </div>
-    ${i < STEPS.length-1 ? '<div class="step-arrow">›</div>' : ''}
-  </div>`).join('');
-
-// News — первые 3 из общего массива в app.js
-document.getElementById('newsGrid').innerHTML = NEWS.slice(0,3).map(n => `
-  <div class="news-card card card-hover">
-    <div class="news-type" style="background:${n.tagColor};color:${n.tagText}">${n.tag}</div>
-    <div class="news-title">${n.title}</div>
-    <div class="news-body">${n.body}</div>
-    <div class="news-date">${n.date}</div>
-  </div>`).join('');
+  </a>`).join('');
 </script>
 </body>
 </html>

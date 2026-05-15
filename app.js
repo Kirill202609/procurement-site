@@ -93,6 +93,25 @@ function statusBadge(s) {
   return `<span class="badge badge-${esc(s)}">${esc((STATUSES[s]||{label:s}).label)}</span>`;
 }
 
+const SUPPLIERS = [
+  { id:'S01', name:'ТехноСити',        inn:'7704567890', cats:['IT и ПО','Оборудование'],           contact:'Орлов Д.В.',      phone:'+7 495 111-22-33', email:'sales@technocity.ru',   status:'accredited', since:'2024-03-15', rating:4.8 },
+  { id:'S02', name:'Яндекс',           inn:'7736207543', cats:['IT и ПО'],                          contact:'Семёнова А.К.',   phone:'+7 495 739-70-00', email:'b2b@yandex.ru',         status:'accredited', since:'2023-06-01', rating:4.9 },
+  { id:'S03', name:'Softline',         inn:'7736004880', cats:['IT и ПО'],                          contact:'Громов П.С.',     phone:'+7 495 232-00-23', email:'p.gromov@softline.ru',  status:'accredited', since:'2023-01-10', rating:4.6 },
+  { id:'S04', name:'СтройМастер',      inn:'7701234567', cats:['Строительство/Ремонт'],             contact:'Кузнецов А.Р.',   phone:'+7 926 345-67-89', email:'info@stroymaster.ru',   status:'accredited', since:'2024-08-20', rating:4.3 },
+  { id:'S05', name:'Комус',            inn:'7714025557', cats:['Канцелярия','Мебель'],              contact:'Белова Т.И.',     phone:'+7 495 787-77-77', email:'corp@komus.ru',         status:'accredited', since:'2022-11-05', rating:4.7 },
+  { id:'S06', name:'ScrumTrek',        inn:'7715876543', cats:['Обучение'],                         contact:'Захаров М.Л.',    phone:'+7 495 660-37-50', email:'m.zakharov@scrumtrek.ru',status:'accredited',since:'2025-02-14', rating:4.5 },
+  { id:'S07', name:'Deloitte',         inn:'7703309297', cats:['Консалтинг'],                       contact:'Иванова С.Н.',    phone:'+7 495 787-06-00', email:'s.ivanova@deloitte.ru', status:'accredited', since:'2023-09-30', rating:4.9 },
+  { id:'S08', name:'РекламаПро',       inn:'7709876543', cats:['Маркетинг'],                        contact:'Фролов К.А.',     phone:'+7 916 222-33-44', email:'k.frolov@rekpro.ru',    status:'pending',    since:'2026-04-10', rating:null },
+  { id:'S09', name:'МегаТранс',        inn:'7712345670', cats:['Транспорт'],                        contact:'Соколов В.П.',    phone:'+7 903 555-66-77', email:'v.sokolov@megatrans.ru',status:'pending',    since:'2026-05-02', rating:null },
+  { id:'S10', name:'СтройГрупп',       inn:'7705551234', cats:['Строительство/Ремонт','Транспорт'], contact:'Миронов Е.А.',    phone:'+7 495 400-11-22', email:'info@stroygroup.ru',    status:'suspended',  since:'2023-05-18', rating:3.1 },
+];
+
+const SUPPLIER_STATUSES = {
+  accredited: { label:'Аккредитован',  color:'#166534', bg:'rgba(22,101,52,0.1)' },
+  pending:    { label:'На проверке',   color:'#a16207', bg:'rgba(161,98,7,0.1)'  },
+  suspended:  { label:'Приостановлен', color:'#991b1b', bg:'rgba(153,27,27,0.1)' },
+};
+
 const NEWS = [
   { id:1, tag:'Объявление', tagColor:'rgba(74,110,224,0.12)', tagText:'#4a6ee0', title:'Обновление положения о закупках с 1 июня 2026', body:'Вводятся новые требования к квалификации поставщиков: обязательная аккредитация на портале и предоставление финансовой отчётности за последние 2 года.', date:'12 мая 2026', dateISO:'2026-05-12' },
   { id:2, tag:'Итоги',      tagColor:'rgba(22,101,52,0.1)',    tagText:'#166534', title:'Экономия 8,2% по итогам тендеров Q1 2026', body:'По результатам конкурентных закупок первого квартала достигнута экономия бюджета 8,2% относительно первоначальных заявок подразделений.', date:'5 мая 2026', dateISO:'2026-05-05' },
@@ -106,14 +125,14 @@ const NEWS = [
 
 function navHTML(active) {
   const links = [
-    ['index.html','Главная'],
+    ['index.html','Дашборд'],
     ['tenders.html','Закупки'],
-    ['news.html','Новости'],
-    ['team.html','Команда'],
+    ['suppliers.html','Поставщики'],
     ['docs.html','Документы'],
     ['howto.html','Как купить?'],
+    ['news.html','Новости'],
+    ['team.html','Команда'],
     ['survey.html','Опросы'],
-    ['suppliers.html','Поставщикам'],
   ];
   return `<nav class="navbar">
   <div class="container">
@@ -144,14 +163,14 @@ function footerHTML() {
       </div>
       <div>
         <div class="footer-heading">Навигация</div>
-        <a href="index.html" class="footer-link">Главная</a>
+        <a href="index.html" class="footer-link">Дашборд</a>
         <a href="tenders.html" class="footer-link">Реестр закупок</a>
-        <a href="news.html" class="footer-link">Новости</a>
-        <a href="team.html" class="footer-link">Команда</a>
+        <a href="suppliers.html" class="footer-link">Реестр поставщиков</a>
         <a href="docs.html" class="footer-link">Документы</a>
         <a href="howto.html" class="footer-link">Как купить?</a>
+        <a href="news.html" class="footer-link">Новости</a>
+        <a href="team.html" class="footer-link">Команда</a>
         <a href="survey.html" class="footer-link">Опросы</a>
-        <a href="suppliers.html" class="footer-link">Поставщикам</a>
       </div>
       <div>
         <div class="footer-heading">Документы</div>

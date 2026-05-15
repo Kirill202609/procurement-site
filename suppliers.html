@@ -3,217 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Поставщикам — Дирекция закупок</title>
+  <title>Реестр поставщиков — Дирекция закупок</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .stars{color:#f59e0b;font-size:12px;letter-spacing:1px}
+    .sup-detail{padding:0;max-height:0;overflow:hidden;transition:max-height 0.25s ease,padding 0.2s}
+    .sup-detail.open{max-height:300px;padding:16px 20px}
+    .detail-row{border-top:1px solid rgba(255,255,255,0.5)}
+  </style>
 </head>
 <body>
 
 <div id="nav-slot"></div>
 
-<!-- HERO -->
-<section style="padding:72px 0 60px">
+<section style="padding:40px 0 28px">
   <div class="container">
-    <div style="max-width:620px">
-      <div class="hero-tag">Для поставщиков</div>
-      <h1 class="hero-title" style="font-size:clamp(34px,4vw,52px);margin-bottom:20px">
-        Станьте партнёром<br><span>нашей компании</span>
-      </h1>
-      <p style="font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:32px;max-width:480px">
-        Мы работаем с надёжными поставщиками и открыты к долгосрочному сотрудничеству. Пройдите аккредитацию и получайте приглашения к участию в закупках.
-      </p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <a href="#form" class="btn btn-primary">Подать заявку</a>
-        <a href="#how" class="btn btn-ghost">Как это работает</a>
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <div class="hero-tag">Внутренний реестр</div>
+        <h1 style="font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:4px">Реестр поставщиков</h1>
+        <p style="font-size:14px;color:var(--muted)">Аккредитованные, проверяемые и приостановленные контрагенты</p>
       </div>
+      <button class="btn btn-primary" onclick="showAddModal()">+ Добавить поставщика</button>
     </div>
   </div>
 </section>
 
-<!-- BENEFITS -->
-<section class="section" style="padding-top:0">
+<!-- STATS -->
+<section style="padding:0 0 24px">
   <div class="container">
-    <div class="section-tag">Преимущества</div>
-    <h2 class="section-title" style="margin-bottom:28px">Почему работают с нами</h2>
-    <div class="benefits-grid">
-      <div class="benefit-card card card-hover">
-        <div class="benefit-icon">📊</div>
-        <div class="benefit-title">Прозрачные тендеры</div>
-        <div class="benefit-text">Все закупки проводятся по чётким правилам с равными условиями для всех участников. Никаких закрытых договорённостей.</div>
+    <div class="summary-row" id="supStats"></div>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<section style="padding:0 0 20px">
+  <div class="container">
+    <div class="filters">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input class="input" id="supSearch" placeholder="Компания, ИНН, контакт..." oninput="render()">
       </div>
-      <div class="benefit-card card card-hover">
-        <div class="benefit-icon">⚡</div>
-        <div class="benefit-title">Быстрые решения</div>
-        <div class="benefit-text">Результаты тендера в течение 5 рабочих дней. Договор подписывается не более чем за 10 дней после выбора поставщика.</div>
-      </div>
-      <div class="benefit-card card card-hover">
-        <div class="benefit-icon">🤝</div>
-        <div class="benefit-title">Долгосрочные контракты</div>
-        <div class="benefit-text">Лучшим поставщикам предлагаем рамочные договоры на 1–3 года с гарантированным объёмом закупок.</div>
-      </div>
-      <div class="benefit-card card card-hover">
-        <div class="benefit-icon">💳</div>
-        <div class="benefit-title">Своевременная оплата</div>
-        <div class="benefit-text">Оплата в строго оговорённые сроки без задержек. Средний срок — 14 дней после подписания закрывающих документов.</div>
-      </div>
+      <select class="input" id="supStatus" onchange="render()" style="min-width:160px">
+        <option value="">Все статусы</option>
+        <option value="accredited">Аккредитован</option>
+        <option value="pending">На проверке</option>
+        <option value="suspended">Приостановлен</option>
+      </select>
+      <select class="input" id="supCat" onchange="render()" style="min-width:180px">
+        <option value="">Все категории</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Сбросить</button>
     </div>
   </div>
 </section>
 
-<!-- HOW TO -->
-<section class="section" style="padding-top:0" id="how">
+<!-- TABLE -->
+<section style="padding:0 0 80px">
   <div class="container">
-    <div class="section-tag">Процесс аккредитации</div>
-    <h2 class="section-title" style="margin-bottom:28px">Как стать поставщиком</h2>
-    <div class="how-grid">
-      <div class="how-card card">
-        <div class="how-num">1</div>
-        <div class="how-title">Заполните анкету</div>
-        <div class="how-text">Укажите данные компании, направления деятельности и контактную информацию. Это займёт не более 10 минут.</div>
+    <div id="supCount" style="font-size:13px;color:var(--muted);margin-bottom:14px"></div>
+    <div class="card" style="overflow:hidden">
+      <div class="table-wrap">
+        <table id="supTable">
+          <thead>
+            <tr>
+              <th>Компания</th>
+              <th>ИНН</th>
+              <th>Категории</th>
+              <th>Статус</th>
+              <th>Рейтинг</th>
+              <th>Контакт</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody id="supBody"></tbody>
+        </table>
       </div>
-      <div class="how-card card">
-        <div class="how-num">2</div>
-        <div class="how-title">Приложите документы</div>
-        <div class="how-text">Загрузите учредительные документы, выписку из ЕГРЮЛ и финансовую отчётность за последние 2 года.</div>
-      </div>
-      <div class="how-card card">
-        <div class="how-num">3</div>
-        <div class="how-title">Пройдите проверку</div>
-        <div class="how-text">Служба безопасности и финансовый отдел проверяют документы в течение 5 рабочих дней. Уведомление придёт на email.</div>
-      </div>
-      <div class="how-card card">
-        <div class="how-num">4</div>
-        <div class="how-title">Участвуйте в тендерах</div>
-        <div class="how-text">После аккредитации вы начнёте получать приглашения на тендеры по своим категориям товаров и услуг.</div>
-      </div>
+    </div>
+    <div id="supEmpty" class="empty-state hidden">
+      <div class="empty-icon">🏢</div>
+      <div class="empty-title">Поставщики не найдены</div>
+      <div style="font-size:13px;color:var(--subtle);margin-top:6px">Измените фильтры или поисковый запрос</div>
     </div>
   </div>
 </section>
 
-<!-- REQUIREMENTS -->
-<section class="section" style="padding-top:0">
-  <div class="container">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
-      <div class="card" style="padding:32px">
-        <div class="section-tag">Требования</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:20px">К поставщикам</h3>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Юридическое лицо или ИП, зарегистрированное в РФ</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Опыт работы в соответствующей отрасли от 1 года</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Отсутствие задолженности перед бюджетом</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Отсутствие процедур банкротства и ликвидации</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Наличие необходимых лицензий и сертификатов</span>
-          </div>
-          <div style="display:flex;align-items:flex-start;gap:10px">
-            <span style="color:#10b981;font-size:16px;flex-shrink:0">✓</span>
-            <span style="font-size:14px;color:var(--muted);line-height:1.5">Положительная деловая репутация на рынке</span>
-          </div>
-        </div>
-      </div>
-      <div class="card" style="padding:32px">
-        <div class="section-tag">Документы</div>
-        <h3 style="font-size:20px;font-weight:700;margin-bottom:20px">Для аккредитации</h3>
-        <div style="display:flex;flex-direction:column;gap:12px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">📄</span>
-            <span style="font-size:14px;color:var(--muted)">Устав / учредительный договор</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">📋</span>
-            <span style="font-size:14px;color:var(--muted)">Выписка из ЕГРЮЛ (не старше 30 дней)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">🏦</span>
-            <span style="font-size:14px;color:var(--muted)">Карточка с банковскими реквизитами</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">📊</span>
-            <span style="font-size:14px;color:var(--muted)">Бухгалтерская отчётность за последние 2 года</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">✅</span>
-            <span style="font-size:14px;color:var(--muted)">Справка об отсутствии задолженности по налогам</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:18px">📞</span>
-            <span style="font-size:14px;color:var(--muted)">Контакты руководства и коммерческого отдела</span>
-          </div>
-        </div>
-      </div>
+<!-- ADD MODAL -->
+<div id="addOverlay" class="overlay hidden" onclick="if(event.target===this)closeModal()">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div><div class="modal-title">Новый поставщик</div><div class="modal-num">Заявка на аккредитацию</div></div>
+      <button class="btn-icon" onclick="closeModal()">✕</button>
     </div>
-  </div>
-</section>
-
-<!-- FORM -->
-<section class="section" style="padding-top:0;padding-bottom:80px" id="form">
-  <div class="container">
-    <div class="section-tag">Заявка</div>
-    <h2 class="section-title" style="margin-bottom:8px">Подать заявку на аккредитацию</h2>
-    <p class="section-sub" style="margin-bottom:32px">Заполните форму — мы свяжемся с вами в течение 1 рабочего дня</p>
-    <div class="card" style="padding:40px;max-width:780px" id="formCard">
-      <form id="accForm" onsubmit="submitForm(event)">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Название компании *</label>
-            <input class="input" id="sCompany" placeholder="ООО «Пример»" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">ИНН *</label>
-            <input class="input mono" id="sInn" placeholder="7700000000" required>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Контактное лицо *</label>
-            <input class="input" id="sContact" placeholder="Иванов Иван Иванович" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Должность</label>
-            <input class="input" id="sPosition" placeholder="Директор по продажам">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Email *</label>
-            <input class="input" type="email" id="sEmail" placeholder="info@example.ru" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Телефон *</label>
-            <input class="input" id="sPhone" placeholder="+7 (495) 000-00-00" required>
-          </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Название компании *</label>
+          <input class="input" id="nName" placeholder="ООО «Пример»">
         </div>
         <div class="form-group">
-          <label class="form-label">Категории поставок</label>
-          <div id="catChecks" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px"></div>
+          <label class="form-label">ИНН *</label>
+          <input class="input mono" id="nInn" placeholder="7700000000">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Контактное лицо *</label>
+          <input class="input" id="nContact" placeholder="Иванов И.И.">
         </div>
         <div class="form-group">
-          <label class="form-label">О компании и опыт работы</label>
-          <textarea class="input" id="sAbout" placeholder="Расскажите о вашей компании, ключевых клиентах и опыте работы..." style="min-height:100px"></textarea>
+          <label class="form-label">Телефон</label>
+          <input class="input" id="nPhone" placeholder="+7 (495) 000-00-00">
         </div>
-        <div style="margin-top:8px;margin-bottom:24px;font-size:12px;color:var(--subtle)">
-          Нажимая «Отправить заявку», вы соглашаетесь с <a href="#" style="color:var(--primary)">политикой обработки персональных данных</a>.
-        </div>
-        <button type="submit" class="btn btn-primary" style="min-width:200px">Отправить заявку →</button>
-      </form>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="input" type="email" id="nEmail" placeholder="info@company.ru">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Категории поставок</label>
+        <div id="nCats" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="addSupplier()">Добавить →</button>
     </div>
   </div>
-</section>
+</div>
 
 <div id="footer-slot"></div>
 
@@ -222,41 +142,149 @@
 document.getElementById('nav-slot').innerHTML   = navHTML('suppliers.html');
 document.getElementById('footer-slot').innerHTML = footerHTML();
 
-// Populate category checkboxes
-const catChecks = document.getElementById('catChecks');
-CATEGORIES.forEach(c => {
-  const lbl = document.createElement('label');
-  lbl.style.cssText = 'display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.8);transition:background 0.15s';
-  lbl.innerHTML = `<input type="checkbox" name="cats" value="${c}" style="accent-color:#4a6ee0"> ${c}`;
-  lbl.addEventListener('mouseover', () => lbl.style.background = 'rgba(74,110,224,0.1)');
-  lbl.addEventListener('mouseout',  () => lbl.style.background = 'rgba(255,255,255,0.55)');
-  catChecks.appendChild(lbl);
-});
+// Populate category filter
+const allCats = [...new Set(SUPPLIERS.flatMap(s => s.cats))].sort();
+const catSelect = document.getElementById('supCat');
+allCats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; catSelect.appendChild(o); });
 
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+// Stats
+function renderStats() {
+  const acc  = SUPPLIERS.filter(s => s.status === 'accredited').length;
+  const pend = SUPPLIERS.filter(s => s.status === 'pending').length;
+  const susp = SUPPLIERS.filter(s => s.status === 'suspended').length;
+  document.getElementById('supStats').innerHTML = `
+    <div class="summary-card card"><div class="summary-val">${SUPPLIERS.length}</div><div class="summary-lbl">Всего в реестре</div></div>
+    <div class="summary-card card" style="background:rgba(22,101,52,0.08)"><div class="summary-val" style="color:#166534">${acc}</div><div class="summary-lbl">Аккредитовано</div></div>
+    <div class="summary-card card" style="background:rgba(161,98,7,0.08)"><div class="summary-val" style="color:#a16207">${pend}</div><div class="summary-lbl">На проверке</div></div>
+    <div class="summary-card card" style="background:rgba(153,27,27,0.08)"><div class="summary-val" style="color:#991b1b">${susp}</div><div class="summary-lbl">Приостановлено</div></div>`;
+}
+renderStats();
+
+function stars(r) {
+  if (!r) return '<span style="color:var(--subtle);font-size:12px">—</span>';
+  const full = Math.round(r);
+  return `<span class="stars">${'★'.repeat(full)}${'☆'.repeat(5-full)}</span> <span style="font-size:11px;color:var(--muted)">${r}</span>`;
 }
 
-function submitForm(e) {
-  e.preventDefault();
-  const inn = document.getElementById('sInn').value.trim();
-  if (!/^\d{10}(\d{2})?$/.test(inn)) {
-    document.getElementById('sInn').setCustomValidity('ИНН должен содержать 10 или 12 цифр');
-    document.getElementById('sInn').reportValidity();
+let expandedId = null;
+
+function render() {
+  const q    = document.getElementById('supSearch').value.toLowerCase().trim();
+  const st   = document.getElementById('supStatus').value;
+  const cat  = document.getElementById('supCat').value;
+
+  const filtered = SUPPLIERS.filter(s => {
+    const matchQ  = !q || s.name.toLowerCase().includes(q) || s.inn.includes(q) || s.contact.toLowerCase().includes(q);
+    const matchSt = !st  || s.status === st;
+    const matchCt = !cat || s.cats.includes(cat);
+    return matchQ && matchSt && matchCt;
+  });
+
+  const body  = document.getElementById('supBody');
+  const empty = document.getElementById('supEmpty');
+  const count = document.getElementById('supCount');
+  const table = document.getElementById('supTable');
+
+  if (filtered.length === 0) {
+    table.style.display = 'none';
+    empty.classList.remove('hidden');
+    count.textContent = '';
     return;
   }
-  document.getElementById('sInn').setCustomValidity('');
-  const company = escapeHtml(document.getElementById('sCompany').value);
-  document.getElementById('formCard').innerHTML = `
-    <div style="text-align:center;padding:48px 24px">
-      <div style="font-size:56px;margin-bottom:20px">✅</div>
-      <h3 style="font-size:22px;font-weight:700;margin-bottom:12px">Заявка отправлена!</h3>
-      <p style="font-size:15px;color:var(--muted);max-width:380px;margin:0 auto 28px">
-        Мы получили заявку от <strong>${company}</strong> и свяжемся с вами в течение 1 рабочего дня.
-      </p>
-      <a href="index.html" class="btn btn-primary">На главную</a>
-    </div>`;
+  table.style.display = '';
+  empty.classList.add('hidden');
+  count.textContent = `Показано: ${filtered.length} из ${SUPPLIERS.length}`;
+
+  const st_cfg = SUPPLIER_STATUSES;
+  body.innerHTML = filtered.map(s => {
+    const cfg = st_cfg[s.status];
+    const isOpen = expandedId === s.id;
+    return `
+      <tr onclick="toggleRow('${s.id}')" style="cursor:pointer">
+        <td style="font-weight:600;font-size:13px">${esc(s.name)}</td>
+        <td class="td-num">${esc(s.inn)}</td>
+        <td style="font-size:12px;color:var(--muted);max-width:180px">${s.cats.join(', ')}</td>
+        <td><span class="badge" style="background:${cfg.bg};color:${cfg.color}">${cfg.label}</span></td>
+        <td>${stars(s.rating)}</td>
+        <td class="td-resp">${esc(s.contact)}</td>
+        <td class="td-num">${fmtDate(s.since)}</td>
+      </tr>
+      <tr class="detail-row ${isOpen?'':'hidden'}" id="det-${s.id}">
+        <td colspan="7" style="padding:0">
+          <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:rgba(255,255,255,0.3)">
+            <div><div class="detail-label">Телефон</div><div class="detail-value"><a href="tel:${esc(s.phone)}" style="color:var(--primary);text-decoration:none">${esc(s.phone)}</a></div></div>
+            <div><div class="detail-label">Email</div><div class="detail-value"><a href="mailto:${esc(s.email)}" style="color:var(--primary);text-decoration:none">${esc(s.email)}</a></div></div>
+            <div><div class="detail-label">Дата аккредитации</div><div class="detail-value">${fmtDate(s.since)}</div></div>
+            <div style="grid-column:span 3;display:flex;gap:10px">
+              ${s.status==='pending' ? `<button class="btn btn-sm" style="background:rgba(22,101,52,0.1);color:#166534" onclick="changeStatus(event,'${s.id}','accredited')">✓ Аккредитовать</button><button class="btn btn-sm btn-danger" onclick="changeStatus(event,'${s.id}','suspended')">✕ Отклонить</button>` : ''}
+              ${s.status==='accredited' ? `<button class="btn btn-sm btn-danger" onclick="changeStatus(event,'${s.id}','suspended')">Приостановить</button>` : ''}
+              ${s.status==='suspended' ? `<button class="btn btn-sm" style="background:rgba(22,101,52,0.1);color:#166534" onclick="changeStatus(event,'${s.id}','accredited')">Восстановить</button>` : ''}
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
 }
+
+function toggleRow(id) {
+  expandedId = expandedId === id ? null : id;
+  render();
+}
+
+function changeStatus(e, id, newStatus) {
+  e.stopPropagation();
+  const s = SUPPLIERS.find(s => s.id === id);
+  if (s) { s.status = newStatus; s.since = s.since || new Date().toISOString().split('T')[0]; }
+  renderStats();
+  render();
+}
+
+function resetFilters() {
+  document.getElementById('supSearch').value = '';
+  document.getElementById('supStatus').value = '';
+  document.getElementById('supCat').value = '';
+  render();
+}
+
+// Add supplier modal
+function showAddModal() {
+  document.getElementById('addOverlay').classList.remove('hidden');
+  const wrap = document.getElementById('nCats');
+  wrap.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const lbl = document.createElement('label');
+    lbl.style.cssText = 'display:inline-flex;align-items:center;gap:5px;font-size:12px;cursor:pointer;padding:4px 10px;border-radius:16px;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.8)';
+    lbl.innerHTML = `<input type="checkbox" name="ncat" value="${esc(c)}" style="accent-color:#4a6ee0"> ${esc(c)}`;
+    wrap.appendChild(lbl);
+  });
+}
+
+function closeModal() { document.getElementById('addOverlay').classList.add('hidden'); }
+
+function addSupplier() {
+  const name = document.getElementById('nName').value.trim();
+  const inn  = document.getElementById('nInn').value.trim();
+  const contact = document.getElementById('nContact').value.trim();
+  if (!name || !inn || !contact) { alert('Заполните обязательные поля'); return; }
+  if (!/^\d{10}(\d{2})?$/.test(inn)) { alert('ИНН должен содержать 10 или 12 цифр'); return; }
+  const cats = [...document.querySelectorAll('#nCats input:checked')].map(i => i.value);
+  const newId = 'S' + String(SUPPLIERS.length + 1).padStart(2,'0');
+  SUPPLIERS.push({
+    id: newId,
+    name, inn, cats,
+    contact,
+    phone: document.getElementById('nPhone').value.trim() || '—',
+    email: document.getElementById('nEmail').value.trim() || '—',
+    status: 'pending',
+    since: new Date().toISOString().split('T')[0],
+    rating: null,
+  });
+  closeModal();
+  renderStats();
+  render();
+}
+
+render();
 </script>
 </body>
 </html>

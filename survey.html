@@ -31,6 +31,7 @@
     .result-track{flex:1;height:10px;background:rgba(74,110,224,0.1);border-radius:5px;overflow:hidden}
     .result-fill{height:100%;background:var(--primary);border-radius:5px}
     .result-pct{font-size:12px;font-weight:700;color:var(--primary);min-width:36px;text-align:right}
+    @media(max-width:700px){.survey-layout{grid-template-columns:1fr!important}.survey-sticky{position:static!important}}
   </style>
 </head>
 <body>
@@ -51,7 +52,7 @@
 
 <section style="padding:0 0 80px">
   <div class="container">
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start">
+    <div class="survey-layout" style="display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start">
 
       <!-- LEFT: active surveys -->
       <div>
@@ -136,7 +137,7 @@
       </div>
 
       <!-- RIGHT: stats + feedback form -->
-      <div style="position:sticky;top:80px;display:flex;flex-direction:column;gap:16px">
+      <div class="survey-sticky" style="position:sticky;top:80px;display:flex;flex-direction:column;gap:16px">
         <div class="card" style="padding:24px">
           <div class="section-tag" style="margin-bottom:12px">Статистика</div>
           <div style="display:flex;flex-direction:column;gap:14px">

@@ -397,9 +397,15 @@
       .hs-sep { display: none }
       .quick-actions { grid-template-columns: 1fr 1fr }
       .pipeline-grid { grid-template-columns: repeat(2,1fr) }
+      .dash-bottom { grid-template-columns: 1fr !important }
     }
     @media(max-width:480px) {
       .hero-title-main { letter-spacing: -1.5px }
+      .hero-stats { gap: 14px }
+      .quick-actions { grid-template-columns: 1fr 1fr }
+      .pipeline-grid { grid-template-columns: repeat(2,1fr) }
+      .feat-strip { gap: 8px }
+      .feat-chip { font-size: 11px; padding: 6px 12px }
     }
   </style>
 </head>
@@ -556,7 +562,7 @@
   <!-- Bottom: pending suppliers + news -->
   <section style="padding:0 0 80px">
     <div class="container">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div class="dash-bottom" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
         <div>
           <div class="section-header" style="margin-bottom:16px">
             <div>

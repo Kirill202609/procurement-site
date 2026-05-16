@@ -134,18 +134,22 @@ function navHTML(active) {
     ['team.html','Команда'],
     ['survey.html','Опросы'],
   ];
-  return `<nav class="navbar">
-  <div class="container">
+  const linkItems = links.map(([href,label])=>`<a href="${href}" class="nav-link${active===href?' active':''}">${label}</a>`).join('');
+  return `<nav class="navbar" style="position:sticky;top:0;z-index:200">
+  <div class="container" style="position:relative">
     <a href="index.html" class="nav-brand">
       <div class="brand-icon">ДЗ</div>
       <div><div class="brand-name">Дирекция закупок</div><div class="brand-sub">Корпоративный портал</div></div>
     </a>
-    <div class="nav-links">
-      ${links.map(([href,label])=>`<a href="${href}" class="nav-link${active===href?' active':''}">${label}</a>`).join('')}
-    </div>
+    <div class="nav-links">${linkItems}</div>
     <div class="nav-actions">
       <a href="tenders.html" class="btn btn-primary btn-sm">+ Новая закупка</a>
+      <button class="nav-hamburger" id="navHamburger" onclick="
+        this.classList.toggle('open');
+        document.getElementById('navMobile').classList.toggle('open');
+      "><span></span><span></span><span></span></button>
     </div>
+    <div class="nav-mobile" id="navMobile">${linkItems}</div>
   </div>
 </nav>`;
 }

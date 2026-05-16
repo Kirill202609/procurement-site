@@ -13,6 +13,15 @@
     .sup-detail{padding:0;max-height:0;overflow:hidden;transition:max-height 0.25s ease,padding 0.2s}
     .sup-detail.open{max-height:300px;padding:16px 20px}
     .detail-row{border-top:1px solid rgba(255,255,255,0.5)}
+    @media(max-width:700px){
+      .sup-det-grid{grid-template-columns:1fr 1fr!important}
+      thead th:nth-child(3),tbody td:nth-child(3),
+      thead th:nth-child(5),tbody td:nth-child(5),
+      thead th:nth-child(6),tbody td:nth-child(6){display:none}
+    }
+    @media(max-width:480px){
+      .sup-det-grid{grid-template-columns:1fr!important}
+    }
   </style>
 </head>
 <body>
@@ -211,7 +220,7 @@ function render() {
       </tr>
       <tr class="detail-row ${isOpen?'':'hidden'}" id="det-${s.id}">
         <td colspan="7" style="padding:0">
-          <div style="padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:rgba(255,255,255,0.3)">
+          <div class="sup-det-grid" style="padding:16px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:rgba(255,255,255,0.3)">
             <div><div class="detail-label">Телефон</div><div class="detail-value"><a href="tel:${esc(s.phone)}" style="color:var(--primary);text-decoration:none">${esc(s.phone)}</a></div></div>
             <div><div class="detail-label">Email</div><div class="detail-value"><a href="mailto:${esc(s.email)}" style="color:var(--primary);text-decoration:none">${esc(s.email)}</a></div></div>
             <div><div class="detail-label">Дата аккредитации</div><div class="detail-value">${fmtDate(s.since)}</div></div>

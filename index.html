@@ -105,6 +105,41 @@
     @keyframes scroll-bounce { 0%,100% { transform: translateY(0); opacity: 1 } 75% { transform: translateY(11px); opacity: 0 } }
     @keyframes fade-up-in { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
 
+    /* ── PHOTO SLIDESHOW ────────────────────────── */
+    .hero-slides{position:absolute;inset:0;z-index:-2;overflow:hidden}
+    .hero-slide{
+      position:absolute;inset:0;
+      background-size:cover;background-position:center;
+      opacity:0;
+      animation-duration:32s;
+      animation-timing-function:ease-in-out;
+      animation-iteration-count:infinite;
+      animation-fill-mode:backwards;
+    }
+    .hero-slide:nth-child(1){animation-name:heroFade,kbA;animation-delay:0s}
+    .hero-slide:nth-child(2){animation-name:heroFade,kbB;animation-delay:8s}
+    .hero-slide:nth-child(3){animation-name:heroFade,kbA;animation-delay:16s}
+    .hero-slide:nth-child(4){animation-name:heroFade,kbB;animation-delay:24s}
+    @keyframes heroFade{
+      0%,4%   {opacity:0}
+      9%,24%  {opacity:1}
+      29%,100%{opacity:0}
+    }
+    @keyframes kbA{
+      0%  {transform:scale(1.0) translate(0%,0%)}
+      100%{transform:scale(1.18) translate(-2%,-1.5%)}
+    }
+    @keyframes kbB{
+      0%  {transform:scale(1.14) translate(2%,1%)}
+      100%{transform:scale(1.0) translate(-1%,-0.5%)}
+    }
+    .hero-overlay{
+      position:absolute;inset:0;z-index:-1;
+      background:
+        radial-gradient(ellipse 80% 58% at 50% 40%,rgba(255,255,255,.68) 0%,rgba(255,255,255,.04) 72%),
+        linear-gradient(to bottom,rgba(255,255,255,.28) 0%,rgba(255,255,255,.08) 48%,rgba(255,255,255,.55) 100%);
+    }
+
     /* ── STATS STRIP ────────────────────────── */
     .lp-stats {
       background: var(--bg-dark);
@@ -237,7 +272,13 @@
 
 <!-- ═══ HERO ═════════════════════════════════════ -->
 <section class="lp-hero">
-  <canvas id="heroBg" style="position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-1"></canvas>
+  <div class="hero-slides">
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80&fit=crop&auto=format')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1920&q=80&fit=crop&auto=format')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80&fit=crop&auto=format')"></div>
+    <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1920&q=80&fit=crop&auto=format')"></div>
+  </div>
+  <div class="hero-overlay"></div>
   <div class="lp-hero-noise"></div>
 
   <div class="lp-eyebrow">
@@ -550,143 +591,6 @@ document.getElementById('newsList').innerHTML = NEWS.slice(0,4).map(n=>`
     </div>
   </a>`).join('');
 
-/* ── Mountain canvas animation ────────────────────────────── */
-(function(){
-  const cv = document.getElementById('heroBg');
-  if (!cv) return;
-  const cx = cv.getContext('2d');
-  const PR = Math.min(devicePixelRatio || 1, 2);
-  let W, H, snow = [];
-
-  function resize() {
-    W = cv.width  = cv.offsetWidth  * PR;
-    H = cv.height = cv.offsetHeight * PR;
-    snow = Array.from({length:65}, () => ({
-      x: Math.random() * W,  y: Math.random() * H * .9,
-      r: (.5 + Math.random() * 1.5) * PR,
-      vx:(Math.random() - .5) * .3,
-      vy: .1 + Math.random() * .42,
-      a:  .12 + Math.random() * .36,
-    }));
-  }
-
-  /* sky phases: [top_rgb, bottom_rgb] — daytime + golden hours */
-  const SKY = [
-    [[238,188,208],[255,228,238]],  // 0 dawn rose
-    [[255,170, 78],[255,224,128]],  // 1 sunrise gold
-    [ [62,132,208],[172,216,250]],  // 2 morning blue
-    [ [86,160,230],[196,230,255]],  // 3 midday clear
-    [[250,198, 92],[255,238,172]],  // 4 golden afternoon
-    [[225,115, 62],[255,162,110]],  // 5 warm sunset
-  ];
-
-  function getSky(t) {
-    const ph = (t / 13000) % SKY.length;
-    const i  = Math.floor(ph) % SKY.length, j = (i+1) % SKY.length, f = ph % 1;
-    const lr = (a,b) => a.map((v,k) => Math.round(v+(b[k]-v)*f));
-    return [lr(SKY[i][0],SKY[j][0]), lr(SKY[i][1],SKY[j][1])];
-  }
-
-  function drawSky(t) {
-    const [top,bot] = getSky(t);
-    const g = cx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0, `rgb(${top})`);
-    g.addColorStop(1, `rgb(${bot})`);
-    cx.fillStyle = g; cx.fillRect(0,0,W,H);
-  }
-
-  /* soft cloud puffs */
-  function drawClouds(t) {
-    const [top] = getSky(t);
-    const brightness = (top[0]*.299+top[1]*.587+top[2]*.114)/255;
-    const cloudA = .12 + brightness * .14;
-    [[.18,.15,.22,.06],[.52,.12,.32,.07],[.78,.2,.26,.05],[.35,.22,.18,.04]].forEach(([cx_,cy,rw,rh],i)=>{
-      const ox = Math.sin(t*(.00008+i*.00003)+i)*W*.018;
-      const x = cx_*W+ox, y = cy*H;
-      const cg = cx.createRadialGradient(x,y,0,x,y,rw*W);
-      cg.addColorStop(0,`rgba(255,255,255,${cloudA})`);
-      cg.addColorStop(1,'rgba(255,255,255,0)');
-      cx.save(); cx.scale(1, rh/rw); cx.fillStyle=cg;
-      cx.beginPath(); cx.arc(x,y*(rw/rh),rw*W,0,Math.PI*2); cx.fill();
-      cx.restore();
-    });
-  }
-
-  /* mountain layers */
-  const LAYERS = [
-    {base:.72,h:.16,seed:7, c:[188,200,226],a:.42,ds:1.8e-4},
-    {base:.78,h:.24,seed:13,c:[122,142,180],a:.68,ds:2.8e-4},
-    {base:.85,h:.33,seed:3, c:[66, 86,136], a:.87,ds:4e-4  },
-    {base:.92,h:.41,seed:19,c:[21, 30, 70], a:1,  ds:5.5e-4},
-  ];
-
-  function peakY(x, seed, bY, mH, drift) {
-    const nx = (x+drift)/W;
-    return bY
-      - Math.abs(Math.sin(nx*Math.PI*(2.1+seed*.08)))        *mH*.62
-      - Math.abs(Math.sin(nx*Math.PI*(4.9+seed*.14)+seed))   *mH*.26
-      - Math.abs(Math.sin(nx*Math.PI*(10.3+seed*.2)+seed*2)) *mH*.12;
-  }
-
-  function drawMounts(t) {
-    LAYERS.forEach(m => {
-      const bY=H*m.base, mH=H*m.h, drift=Math.sin(t*m.ds)*W*.022;
-      cx.beginPath(); cx.moveTo(0,H);
-      for (let x=0;x<=W;x+=3) cx.lineTo(x, peakY(x,m.seed,bY,mH,drift));
-      cx.lineTo(W,H); cx.closePath();
-      cx.fillStyle=`rgba(${m.c[0]},${m.c[1]},${m.c[2]},${m.a})`; cx.fill();
-      /* snow caps on two front layers */
-      if (m.a > .8) {
-        cx.save();
-        cx.beginPath(); cx.moveTo(0,H);
-        for (let x=0;x<=W;x+=3) cx.lineTo(x, peakY(x,m.seed,bY,mH,drift));
-        cx.lineTo(W,H); cx.closePath(); cx.clip();
-        const sg=cx.createLinearGradient(0,bY-mH,0,bY-mH*.35);
-        sg.addColorStop(0,'rgba(255,255,255,.8)');
-        sg.addColorStop(1,'rgba(255,255,255,0)');
-        cx.fillStyle=sg; cx.fillRect(0,bY-mH,W,mH*.68);
-        cx.restore();
-      }
-    });
-  }
-
-  function drawMist() {
-    const mg=cx.createLinearGradient(0,H*.67,0,H);
-    mg.addColorStop(0,'rgba(255,255,255,0)');
-    mg.addColorStop(.5,'rgba(255,255,255,.16)');
-    mg.addColorStop(1, 'rgba(255,255,255,.62)');
-    cx.fillStyle=mg; cx.fillRect(0,H*.67,W,H);
-  }
-
-  function drawVeil() {
-    /* radial white glow so hero text stays readable */
-    const vg=cx.createRadialGradient(W/2,H*.37,0,W/2,H*.37,W*.5);
-    vg.addColorStop(0,  'rgba(255,255,255,.56)');
-    vg.addColorStop(.48,'rgba(255,255,255,.1)');
-    vg.addColorStop(1,  'rgba(255,255,255,0)');
-    cx.fillStyle=vg; cx.fillRect(0,0,W,H);
-  }
-
-  function drawSnow() {
-    snow.forEach(p=>{
-      p.x+=p.vx; p.y+=p.vy;
-      if(p.y>H*.9){p.y=-4;p.x=Math.random()*W;}
-      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
-      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      cx.fillStyle=`rgba(255,255,255,${p.a})`; cx.fill();
-    });
-  }
-
-  function draw(t) {
-    cx.clearRect(0,0,W,H);
-    drawSky(t); drawClouds(t); drawMounts(t); drawMist(); drawVeil(); drawSnow();
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', resize);
-  resize();
-  requestAnimationFrame(draw);
-})();
 </script>
 </body>
 </html>

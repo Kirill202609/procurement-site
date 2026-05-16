@@ -154,6 +154,24 @@ function navHTML(active) {
 </nav>`;
 }
 
+/* ── Page transitions ─────────────────────────────────────── */
+(function(){
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:#fff;z-index:9999;opacity:1;pointer-events:none;transition:opacity .42s cubic-bezier(.4,0,.2,1)';
+  document.body.appendChild(ov);
+  requestAnimationFrame(() => requestAnimationFrame(() => { ov.style.opacity = '0'; }));
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a');
+    if (!a) return;
+    const href = a.getAttribute('href') || '';
+    if (a.target || !href || /^(#|javascript:|mailto:|tel:|https?:)/.test(href)) return;
+    e.preventDefault();
+    ov.style.opacity = '1';
+    ov.style.pointerEvents = 'all';
+    setTimeout(() => { location.href = href; }, 420);
+  });
+})();
+
 function footerHTML() {
   return `<footer class="footer">
   <div class="container">
